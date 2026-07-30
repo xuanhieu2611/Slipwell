@@ -6,6 +6,7 @@ import { Icon } from "./icon";
 import {
   defaultProposal,
   initialFocusItems,
+  initialSlippingSignals,
   navigationItems,
 } from "./prototype-data";
 import type {
@@ -14,11 +15,27 @@ import type {
   FiledTask,
   FocusItem,
   Proposal,
+  RetainerDraft,
+  RolloverDecisions,
+  SignalAction,
   ViewName,
 } from "./prototype-types";
+import { RetainersView } from "./retainers-view";
 import { ReviewView } from "./review-view";
+import { SlippingView } from "./slipping-view";
 import { SlipwellMark } from "./slipwell-mark";
 import { TodayView } from "./today-view";
+
+const mobileNavigationItems: Array<{
+  id: ViewName;
+  label: string;
+  glyph: string;
+}> = [
+  { id: "today", label: "Today", glyph: "⌂" },
+  { id: "retainers", label: "Retainers", glyph: "↻" },
+  { id: "slipping", label: "Slipping", glyph: "!" },
+  { id: "review", label: "Review", glyph: "◇" },
+];
 
 function Navigation({
   view,
@@ -61,7 +78,10 @@ function PlaceholderView({
   view,
   onCapture,
 }: {
-  view: Exclude<ViewName, "today" | "review">;
+  view: Exclude<
+    ViewName,
+    "today" | "review" | "retainers" | "slipping"
+  >;
   onCapture: () => void;
 }) {
   const title = view[0].toUpperCase() + view.slice(1);
@@ -75,7 +95,8 @@ function PlaceholderView({
         <p className="eyebrow mb-2">Prototype boundary</p>
         <h1 className="display-title">{title}</h1>
         <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
-          SLIP-003 focuses on Capture, Review, and Today. This destination is present to test the navigation model, but its product workflow comes later.
+          This destination is present to test the information architecture. Its
+          full product workflow comes in a later implementation issue.
         </p>
         <button type="button" onClick={onCapture} className="primary-button mx-auto mt-6">
           <Icon name="plus" size={17} />
@@ -95,20 +116,13 @@ function MobileNavigation({
   onNavigate: (view: ViewName) => void;
   onCapture: () => void;
 }) {
-  const items: Array<{ id: ViewName; label: string; glyph: string }> = [
-    { id: "today", label: "Today", glyph: "⌂" },
-    { id: "tasks", label: "Tasks", glyph: "✓" },
-    { id: "projects", label: "Projects", glyph: "▦" },
-    { id: "review", label: "Review", glyph: "◇" },
-  ];
-
   return (
     <nav
       aria-label="Mobile navigation"
       className="fixed inset-x-0 bottom-0 z-30 border-t border-[var(--line)] bg-[rgba(255,253,248,0.92)] px-2 pb-[max(8px,env(safe-area-inset-bottom))] pt-2 backdrop-blur-xl lg:hidden"
     >
       <ul className="grid grid-cols-5 items-end">
-        {items.slice(0, 2).map((item) => (
+        {mobileNavigationItems.slice(0, 2).map((item) => (
           <li key={item.id}>
             <button
               type="button"
@@ -131,7 +145,7 @@ function MobileNavigation({
             <Icon name="plus" size={23} />
           </button>
         </li>
-        {items.slice(2).map((item) => (
+        {mobileNavigationItems.slice(2).map((item) => (
           <li key={item.id}>
             <button
               type="button"
@@ -178,9 +192,18 @@ export function SlipwellPrototype() {
     initialFocusItems.map((item) => item.id),
   );
   const [notice, setNotice] = useState<"filed" | "undone" | null>(null);
+  const [retainer, setRetainer] = useState<RetainerDraft | null>(null);
+  const [rolloverDecisions, setRolloverDecisions] =
+    useState<RolloverDecisions | null>(null);
+  const [slippingSignals, setSlippingSignals] = useState(
+    initialSlippingSignals,
+  );
   const processingTimeoutRef = useRef<number | null>(null);
 
   const reviewCount = 2;
+  const activeSlippingCount = slippingSignals.filter(
+    (signal) => signal.status === "active",
+  ).length;
   const isFiledTaskFocused = filedTask
     ? topThreeIds.includes(filedTask.id)
     : false;
@@ -294,6 +317,68 @@ export function SlipwellPrototype() {
     setNotice("undone");
   };
 
+  const createRetainer = (nextRetainer: RetainerDraft) => {
+    setRetainer(nextRetainer);
+    setRolloverDecisions(null);
+  };
+
+  const applySignalAction = (signalId: string, action: SignalAction) => {
+    setSlippingSignals((current) =>
+      current.map((signal) => {
+        if (signal.id !== signalId) {
+          return signal;
+        }
+
+        if (action === "change-cadence") {
+          return {
+            ...signal,
+            threshold: "14 days · Custom cadence",
+            outcome:
+              "Cadence changed to 14 days. Future signals will use the new threshold.",
+          };
+        }
+
+        const outcomes = {
+          act: {
+            status: "resolved" as const,
+            outcome: `${signal.actLabel} recorded as qualifying attention. Signal resolved.`,
+          },
+          snooze: {
+            status: "snoozed" as const,
+            outcome: "Snoozed until Monday, August 3. It will not regenerate before then.",
+          },
+          dismiss: {
+            status: "dismissed" as const,
+            outcome: "Dismissed with reason: rule too aggressive.",
+          },
+          pause: {
+            status: "obsolete" as const,
+            outcome: "Paused intentionally. Inactivity signals will not regenerate.",
+          },
+        };
+
+        return {
+          ...signal,
+          ...outcomes[action],
+        };
+      }),
+    );
+  };
+
+  const resetSignal = (signalId: string) => {
+    const original = initialSlippingSignals.find(
+      (signal) => signal.id === signalId,
+    );
+    if (!original) {
+      return;
+    }
+    setSlippingSignals((current) =>
+      current.map((signal) =>
+        signal.id === signalId ? { ...original } : signal,
+      ),
+    );
+  };
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       const target = event.target;
@@ -374,9 +459,11 @@ export function SlipwellPrototype() {
             filedTask={filedTask}
             isFiledTaskFocused={isFiledTaskFocused}
             reviewCount={reviewCount}
+            slippingCount={activeSlippingCount}
             onAddToTopThree={addFiledTaskToTopThree}
             onCapture={openCapture}
             onOpenReview={() => setView("review")}
+            onOpenSlipping={() => setView("slipping")}
           />
         ) : view === "review" ? (
           <ReviewView
@@ -385,6 +472,19 @@ export function SlipwellPrototype() {
             onReviewAmbiguity={openSeededProposal}
             onRetryFailure={retryFailedCapture}
             onUndo={undoFiling}
+          />
+        ) : view === "retainers" ? (
+          <RetainersView
+            retainer={retainer}
+            rolloverDecisions={rolloverDecisions}
+            onCreate={createRetainer}
+            onApplyRollover={setRolloverDecisions}
+          />
+        ) : view === "slipping" ? (
+          <SlippingView
+            signals={slippingSignals}
+            onAction={applySignalAction}
+            onReset={resetSignal}
           />
         ) : (
           <PlaceholderView view={view} onCapture={openCapture} />

@@ -6,9 +6,11 @@ type TodayViewProps = {
   filedTask: FiledTask | null;
   isFiledTaskFocused: boolean;
   reviewCount: number;
+  slippingCount: number;
   onAddToTopThree: () => void;
   onCapture: () => void;
   onOpenReview: () => void;
+  onOpenSlipping: () => void;
 };
 
 const agenda = [
@@ -40,9 +42,11 @@ export function TodayView({
   filedTask,
   isFiledTaskFocused,
   reviewCount,
+  slippingCount,
   onAddToTopThree,
   onCapture,
   onOpenReview,
+  onOpenSlipping,
 }: TodayViewProps) {
   const availableSlots = 3 - focusItems.length;
 
@@ -237,15 +241,27 @@ export function TodayView({
               <Icon name="arrow" size={17} />
             </button>
 
-            <div className="rounded-[22px] border border-[var(--line)] bg-[var(--lime-soft)] p-5">
-              <p className="mb-2 text-[10px] font-black uppercase tracking-[0.16em] text-[var(--lime-deep)]">
-                Nothing slipping
-              </p>
-              <p className="text-sm font-semibold">Your active work has had attention this week.</p>
-              <p className="mt-2 text-xs leading-5 text-[var(--muted)]">
-                That’s a positive signal—not another list to fill.
-              </p>
-            </div>
+            <button
+              type="button"
+              onClick={onOpenSlipping}
+              className="w-full rounded-[22px] border border-[var(--coral)] bg-[var(--coral-soft)] p-5 text-left transition hover:-translate-y-0.5"
+            >
+              <span className="mb-2 flex items-center justify-between gap-3">
+                <span className="text-[10px] font-black uppercase tracking-[0.16em] text-[var(--coral-deep)]">
+                  Attention risk
+                </span>
+                <span className="status-pill bg-[var(--coral)] text-white">
+                  {slippingCount} active
+                </span>
+              </span>
+              <span className="block text-sm font-semibold">
+                See what’s slipping—and why.
+              </span>
+              <span className="mt-2 block text-xs leading-5 text-[var(--muted)]">
+                Task, project, next-action, and retainer examples are ready to
+                review.
+              </span>
+            </button>
           </aside>
         </div>
       </div>
