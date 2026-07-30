@@ -46,8 +46,8 @@ test("typed capture can be corrected, filed to Today, focused, and undone", asyn
   await expect(page.getByText(/Acme monthly marketing/)).toBeVisible();
   await expect(page.getByText(/Sarah Martinez/)).toBeVisible();
 
-  await page.getByRole("button", { name: "Add to Top 3" }).click();
-  await expect(page.getByText("Chosen by you · 0 spots open")).toBeVisible();
+  await page.getByRole("button", { name: "Add to my focus" }).click();
+  await expect(page.getByText("3 of 3 chosen by you · full")).toBeVisible();
   await expect(
     page
       .getByRole("listitem")

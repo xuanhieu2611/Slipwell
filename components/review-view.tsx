@@ -42,6 +42,10 @@ export function ReviewView({
         ) : null}
 
         <div className="space-y-7">
+          {/* Once this capture is filed it belongs under Recently filed. Leaving
+              it here as well would show one capture in two contradictory
+              states. */}
+          {filedTask ? null : (
           <section aria-labelledby="needs-attention-heading">
             <div className="mb-3 flex items-center justify-between px-1">
               <h2 id="needs-attention-heading" className="section-label">
@@ -85,6 +89,7 @@ export function ReviewView({
               </div>
             </article>
           </section>
+          )}
 
           <section aria-labelledby="ready-heading">
             <div className="mb-3 flex items-center justify-between px-1">

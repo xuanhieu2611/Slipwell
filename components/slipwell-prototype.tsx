@@ -12,6 +12,7 @@ import {
 import type {
   CaptureMode,
   CaptureStage,
+  DeliverableTemplate,
   FiledTask,
   FocusItem,
   Proposal,
@@ -74,14 +75,26 @@ function Navigation({
   );
 }
 
+type PlaceholderViewName = Exclude<
+  ViewName,
+  "today" | "review" | "retainers" | "slipping"
+>;
+
+const placeholderContents: Record<PlaceholderViewName, string> = {
+  tasks:
+    "Every task you have filed, with its due date, project, and the capture it came from.",
+  projects:
+    "Each active piece of client or personal work, with its open next action.",
+  notes: "Markdown notes, linked to the projects and people they mention.",
+};
+
 function PlaceholderView({
   view,
+  filedTask,
   onCapture,
 }: {
-  view: Exclude<
-    ViewName,
-    "today" | "review" | "retainers" | "slipping"
-  >;
+  view: PlaceholderViewName;
+  filedTask: FiledTask | null;
   onCapture: () => void;
 }) {
   const title = view[0].toUpperCase() + view.slice(1);
@@ -95,9 +108,16 @@ function PlaceholderView({
         <p className="eyebrow mb-2">Prototype boundary</p>
         <h1 className="display-title">{title}</h1>
         <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
-          This destination is present to test the information architecture. Its
-          full product workflow comes in a later implementation issue.
+          {placeholderContents[view]} This screen is empty because it is not
+          built yet, not because anything is missing.
         </p>
+        {view === "tasks" && filedTask ? (
+          <p className="mx-auto mt-4 max-w-sm rounded-[18px] border border-[var(--line)] bg-[var(--paper)] p-4 text-sm leading-6">
+            “{filedTask.title}” was filed and is safe. Until this screen exists,
+            you can see it on <strong>Today</strong> and under{" "}
+            <strong>Recently filed</strong> in Review.
+          </p>
+        ) : null}
         <button type="button" onClick={onCapture} className="primary-button mx-auto mt-6">
           <Icon name="plus" size={17} />
           Try capture
@@ -192,6 +212,7 @@ export function SlipwellPrototype() {
     initialFocusItems.map((item) => item.id),
   );
   const [notice, setNotice] = useState<"filed" | "undone" | null>(null);
+  const [suggestionDeclined, setSuggestionDeclined] = useState(false);
   const [retainer, setRetainer] = useState<RetainerDraft | null>(null);
   const [rolloverDecisions, setRolloverDecisions] =
     useState<RolloverDecisions | null>(null);
@@ -199,8 +220,7 @@ export function SlipwellPrototype() {
     initialSlippingSignals,
   );
   const processingTimeoutRef = useRef<number | null>(null);
-
-  const reviewCount = 2;
+  const reviewCount = filedTask ? 1 : 2;
   const activeSlippingCount = slippingSignals.filter(
     (signal) => signal.status === "active",
   ).length;
@@ -216,9 +236,18 @@ export function SlipwellPrototype() {
           eyebrow: "Acme",
           detail: "Due Friday",
           tone: "lime",
+          chosenAt: "9:42 AM",
         },
       ]
     : initialFocusItems;
+
+  // The filing toast is transient confirmation, not a persistent surface, so it
+  // must not follow the user onto another view and cover its content. Undo
+  // stays reachable from Recently filed in Review.
+  const navigate = (nextView: ViewName) => {
+    setNotice(null);
+    setView(nextView);
+  };
 
   const clearProcessingTimeout = () => {
     if (processingTimeoutRef.current !== null) {
@@ -232,10 +261,11 @@ export function SlipwellPrototype() {
     setCaptureStage("closed");
   };
 
+  // Specification 8.2: closing transient capture must not discard input that
+  // was already entered, so the draft survives until it is actually filed.
   const openCapture = () => {
     clearProcessingTimeout();
     setCaptureMode("text");
-    setCaptureText("");
     setProposal(defaultProposal);
     setCaptureStage("compose");
   };
@@ -290,6 +320,8 @@ export function SlipwellPrototype() {
     setTopThreeIds((current) =>
       current.filter((itemId) => itemId !== nextTask.id),
     );
+    setSuggestionDeclined(false);
+    setCaptureText("");
     setNotice("filed");
     setCaptureStage("closed");
     setView("today");
@@ -320,6 +352,14 @@ export function SlipwellPrototype() {
   const createRetainer = (nextRetainer: RetainerDraft) => {
     setRetainer(nextRetainer);
     setRolloverDecisions(null);
+  };
+
+  // Retainer invariant: a template edit applies to cycles that have not opened
+  // yet and must leave the generated current cycle untouched.
+  const updateRetainerTemplates = (templates: DeliverableTemplate[]) => {
+    setRetainer((current) =>
+      current ? { ...current, templates } : current,
+    );
   };
 
   const applySignalAction = (signalId: string, action: SignalAction) => {
@@ -391,7 +431,6 @@ export function SlipwellPrototype() {
       if (event.key.toLowerCase() === "c" && !isTyping) {
         event.preventDefault();
         setCaptureMode("text");
-        setCaptureText("");
         setProposal(defaultProposal);
         setCaptureStage("compose");
       }
@@ -410,7 +449,7 @@ export function SlipwellPrototype() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[var(--canvas)] text-[var(--ink)]">
+    <div className="min-h-[100dvh] bg-[var(--canvas)] text-[var(--ink)]">
       <a
         href="#main-content"
         className="fixed left-4 top-4 z-[100] -translate-y-24 rounded-full bg-[var(--ink)] px-4 py-2 text-sm font-bold text-white focus:translate-y-0"
@@ -427,13 +466,13 @@ export function SlipwellPrototype() {
         </button>
       </header>
 
-      <div className="flex min-h-[calc(100vh-68px)] lg:min-h-screen">
-        <aside className="sticky top-0 hidden h-screen w-[238px] shrink-0 flex-col border-r border-[var(--line)] bg-[var(--paper)] px-5 py-7 lg:flex">
+      <div className="flex min-h-[calc(100dvh-68px)] lg:min-h-[100dvh]">
+        <aside className="sticky top-0 hidden h-[100dvh] w-[238px] shrink-0 flex-col border-r border-[var(--line)] bg-[var(--paper)] px-5 py-7 lg:flex">
           <SlipwellMark />
           <Navigation
             view={view}
             reviewCount={reviewCount}
-            onNavigate={setView}
+            onNavigate={navigate}
           />
           <div className="mt-auto">
             <button type="button" onClick={openCapture} className="primary-button mb-5 w-full justify-center">
@@ -458,12 +497,14 @@ export function SlipwellPrototype() {
             focusItems={focusItems}
             filedTask={filedTask}
             isFiledTaskFocused={isFiledTaskFocused}
+            isSuggestionDeclined={suggestionDeclined}
             reviewCount={reviewCount}
             slippingCount={activeSlippingCount}
             onAddToTopThree={addFiledTaskToTopThree}
+            onDeclineSuggestion={() => setSuggestionDeclined(true)}
             onCapture={openCapture}
-            onOpenReview={() => setView("review")}
-            onOpenSlipping={() => setView("slipping")}
+            onOpenReview={() => navigate("review")}
+            onOpenSlipping={() => navigate("slipping")}
           />
         ) : view === "review" ? (
           <ReviewView
@@ -479,6 +520,7 @@ export function SlipwellPrototype() {
             rolloverDecisions={rolloverDecisions}
             onCreate={createRetainer}
             onApplyRollover={setRolloverDecisions}
+            onUpdateTemplates={updateRetainerTemplates}
           />
         ) : view === "slipping" ? (
           <SlippingView
@@ -487,7 +529,11 @@ export function SlipwellPrototype() {
             onReset={resetSignal}
           />
         ) : (
-          <PlaceholderView view={view} onCapture={openCapture} />
+          <PlaceholderView
+            view={view}
+            filedTask={filedTask}
+            onCapture={openCapture}
+          />
         )}
       </div>
 
@@ -526,7 +572,7 @@ export function SlipwellPrototype() {
 
       <MobileNavigation
         view={view}
-        onNavigate={setView}
+        onNavigate={navigate}
         onCapture={openCapture}
       />
 
@@ -543,6 +589,11 @@ export function SlipwellPrototype() {
         onTextChange={setCaptureText}
         onStartRecording={() => setCaptureStage("recording")}
         onFinishRecording={() => setCaptureStage("voice-ready")}
+        onDenyPermission={() => setCaptureStage("permission-denied")}
+        onFallBackToTyping={() => {
+          setCaptureMode("text");
+          setCaptureStage("compose");
+        }}
         onProcess={processCapture}
         onProposalChange={setProposal}
         onAccept={acceptProposal}

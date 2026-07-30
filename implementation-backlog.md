@@ -154,18 +154,58 @@ labels: type:research,type:design,area:product,priority:P0
 
 Turn prototype evidence into a stable interaction contract for implementation.
 
+Delivered as Pass A: expert audit plus a founder walkthrough, without external
+participants, so M1 was not blocked on recruiting. Results in
+`docs/research/slip-005-pass-a-findings.md`; decisions in
+`docs/decisions/0001-private-beta-interaction-contract.md`.
+
 ### Acceptance criteria
 
-- [ ] At least 10 target users attempt capture, route correction, Top 3, retainer creation, rollover, and slipping explanation without coaching.
-- [ ] Completion time, errors, hesitation, and qualitative feedback are recorded.
-- [ ] Browser voice permission and mobile-browser constraints are tested conceptually.
-- [ ] High-severity usability failures are resolved in the prototype.
-- [ ] A decision record freezes beta navigation, terminology, confirmation defaults, and deferred scope.
-- [ ] The decision record confirms or revises the creator-consultant launch identity.
+- [ ] At least 10 target users attempt capture, route correction, Top 3, retainer creation, rollover, and slipping explanation without coaching. **Exception: 1 participant, carried to SLIP-005B.**
+- [ ] Completion time, errors, hesitation, and qualitative feedback are recorded. **Partial: outcome, comprehension, and notes recorded; timing and detours deferred to SLIP-005B as meaningless for a self-test.**
+- [x] Browser voice permission and mobile-browser constraints are tested conceptually.
+- [x] High-severity usability failures are resolved in the prototype.
+- [x] A decision record freezes beta navigation, terminology, confirmation defaults, and deferred scope.
+- [x] The decision record confirms or revises the creator-consultant launch identity. **Provisional pending SLIP-002.**
 
 ### Dependencies
 
 SLIP-003 and SLIP-004.
+
+### Spec references
+
+Sections 2.6, 8, 17.5, and Phase 0.
+
+---
+
+<!-- ISSUE
+milestone: M0 — Product Validation
+priority: P0
+size: M
+labels: type:research,type:design,area:product,priority:P0
+-->
+## SLIP-005B — Run Pass B usability sessions with ten target users
+
+### Outcome
+
+Confirm or revise the provisional parts of the private-beta interaction
+contract with evidence from people who did not design the product.
+
+### Acceptance criteria
+
+- [ ] At least 10 target users attempt the six flows without coaching.
+- [ ] Completion time, errors, detours, hesitation, and qualitative feedback are recorded per task.
+- [ ] The retainer model is understood as more than a monthly reminder, re-testing the Pass A F1 fix.
+- [ ] Participants correctly identify who chose their focus items, re-testing the F2 fix.
+- [ ] "Slipping" is confirmed or replaced, with its perceived value against a plain overdue list recorded.
+- [ ] The removal of People from primary navigation is confirmed or reversed.
+- [ ] "Proposal" is confirmed or replaced without collapsing the proposal/suggestion distinction.
+- [ ] Any severity 3 or 4 problem is fixed and the affected tasks re-run.
+- [ ] DR-0001 is amended or superseded and its provisional markers resolved.
+
+### Dependencies
+
+SLIP-001 for recruiting. Does not block M1 or M2.
 
 ### Spec references
 

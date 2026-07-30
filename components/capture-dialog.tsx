@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { Icon } from "./icon";
 import type {
   CaptureMode,
@@ -17,6 +18,8 @@ type CaptureDialogProps = {
   onTextChange: (text: string) => void;
   onStartRecording: () => void;
   onFinishRecording: () => void;
+  onDenyPermission: () => void;
+  onFallBackToTyping: () => void;
   onProcess: () => void;
   onProposalChange: (proposal: Proposal) => void;
   onAccept: () => void;
@@ -89,7 +92,7 @@ function ProposalEditor({
         title="Does this look right?"
         onClose={onClose}
       />
-      <div className="max-h-[min(74vh,760px)] overflow-y-auto">
+      <div className="max-h-[min(74dvh,760px)] overflow-y-auto">
         <div className="grid border-b border-[var(--line)] md:grid-cols-2">
           <div className="border-b border-[var(--line)] bg-[var(--canvas)] p-5 md:border-b-0 md:border-r sm:p-6">
             <div className="mb-3 flex items-center justify-between">
@@ -226,11 +229,92 @@ export function CaptureDialog({
   onTextChange,
   onStartRecording,
   onFinishRecording,
+  onDenyPermission,
+  onFallBackToTyping,
   onProcess,
   onProposalChange,
   onAccept,
 }: CaptureDialogProps) {
-  if (stage === "closed") {
+  const dialogRef = useRef<HTMLElement>(null);
+  const returnFocusRef = useRef<HTMLElement | null>(null);
+  const isOpen = stage !== "closed";
+
+  // React applies autoFocus during commit, before passive effects run, so the
+  // element that opened the dialog cannot be read once the dialog is already
+  // mounted. Track the last focus outside the dialog instead.
+  useEffect(() => {
+    const remember = (event: FocusEvent) => {
+      const target = event.target;
+      // The dialog is matched through the DOM rather than the ref, because
+      // autoFocus fires before React has attached it.
+      if (
+        target instanceof HTMLElement &&
+        target.closest('[role="dialog"]') === null
+      ) {
+        returnFocusRef.current = target;
+      }
+    };
+
+    document.addEventListener("focusin", remember);
+    return () => document.removeEventListener("focusin", remember);
+  }, []);
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+    return () => {
+      const target = returnFocusRef.current;
+      if (target !== null && document.contains(target)) {
+        target.focus();
+      }
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!isOpen || dialog === null) {
+      return;
+    }
+
+    if (!dialog.contains(document.activeElement)) {
+      dialog.focus();
+    }
+
+    const handleTab = (event: KeyboardEvent) => {
+      if (event.key !== "Tab") {
+        return;
+      }
+      const focusable = Array.from(
+        dialog.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ),
+      );
+      if (focusable.length === 0) {
+        event.preventDefault();
+        dialog.focus();
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement;
+      const outside = !dialog.contains(active);
+
+      if (event.shiftKey && (active === first || outside)) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && (active === last || outside)) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleTab, true);
+    return () => document.removeEventListener("keydown", handleTab, true);
+  }, [isOpen, stage]);
+
+  if (!isOpen) {
     return null;
   }
 
@@ -245,10 +329,12 @@ export function CaptureDialog({
       }}
     >
       <section
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="capture-dialog-title"
-        className="max-h-[96vh] w-full overflow-hidden rounded-t-[28px] bg-[var(--paper)] shadow-[0_24px_90px_rgba(20,22,17,0.3)] sm:max-w-[760px] sm:rounded-[28px]"
+        tabIndex={-1}
+        className="max-h-[96dvh] w-full overflow-hidden rounded-t-[28px] bg-[var(--paper)] shadow-[0_24px_90px_rgba(20,22,17,0.3)] focus:outline-none sm:max-w-[760px] sm:rounded-[28px]"
       >
         {stage === "proposal" ? (
           <ProposalEditor
@@ -376,6 +462,30 @@ export function CaptureDialog({
                             12 seconds · Simulated browser audio
                           </p>
                         </div>
+                      ) : stage === "permission-denied" ? (
+                        <div className="w-full text-left">
+                          <div className="flex items-start gap-3">
+                            <span className="grid size-10 shrink-0 place-items-center rounded-2xl bg-[var(--coral)] text-lg font-black text-white">
+                              !
+                            </span>
+                            <div className="min-w-0">
+                              <p className="text-base font-bold">
+                                Slipwell cannot reach your microphone
+                              </p>
+                              <p className="mt-2 text-xs leading-5 text-[var(--muted)]">
+                                Your browser blocked the request, so voice
+                                capture is unavailable on this device right
+                                now. Nothing you have written has been lost.
+                              </p>
+                              <p className="mt-3 text-xs leading-5 text-[var(--muted)]">
+                                To turn it back on, allow microphone access for
+                                this site in your browser&rsquo;s site settings,
+                                then return here. Most browsers will not ask
+                                again on their own.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
                       ) : (
                         <div>
                           <button
@@ -391,16 +501,35 @@ export function CaptureDialog({
                           <p className="mt-2 text-xs leading-5 text-[var(--muted)]">
                             This prototype simulates browser microphone capture.
                           </p>
+                          <button
+                            type="button"
+                            onClick={onDenyPermission}
+                            className="mt-4 text-[10px] font-black uppercase tracking-[0.14em] text-[var(--muted)] underline underline-offset-4 hover:text-[var(--ink)]"
+                          >
+                            Prototype · simulate blocked microphone
+                          </button>
                         </div>
                       )}
                     </div>
                     <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                       <p className="text-xs text-[var(--muted)]">
-                        Original audio and transcript stay distinguishable.
+                        {stage === "permission-denied"
+                          ? "Typing always works, with or without a microphone."
+                          : "Original audio and transcript stay distinguishable."}
                       </p>
                       {stage === "voice-ready" ? (
                         <button type="button" onClick={onProcess} className="primary-button justify-center">
                           Create proposal
+                          <Icon name="arrow" size={17} />
+                        </button>
+                      ) : null}
+                      {stage === "permission-denied" ? (
+                        <button
+                          type="button"
+                          onClick={onFallBackToTyping}
+                          className="primary-button justify-center"
+                        >
+                          Continue by typing
                           <Icon name="arrow" size={17} />
                         </button>
                       ) : null}

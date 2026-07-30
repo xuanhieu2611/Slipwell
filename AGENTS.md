@@ -20,7 +20,7 @@ Do not start implementation from the product idea or research documents alone. T
 Use this precedence when guidance conflicts:
 
 1. The user's current explicit request.
-2. The active GitHub issue and any decision records made after it.
+2. The active GitHub issue and any decision records made after it, in `docs/decisions/`.
 3. `slipwell-specification.md`.
 4. This `AGENTS.md`.
 5. `implementation-backlog.md`.
@@ -32,6 +32,8 @@ If an issue conflicts materially with the specification, stop and surface the co
 
 - `AGENTS.md`: cross-repository agent workflow and guardrails.
 - `slipwell-specification.md`: product, UX, domain, API, data, security, and delivery contract.
+- `docs/decisions/`: numbered decision records. `DR-0001` freezes the private-beta interaction contract.
+- `docs/research/`: usability test plans, audits, and session findings.
 - `implementation-backlog.md`: local ordered representation of the GitHub backlog.
 - `product-strategy.md`: market, positioning, scope, architecture, pricing, and naming research.
 - `idea-assessment.md`: earlier viability and competitor assessment.
@@ -62,7 +64,9 @@ The first beta must prove three things:
 
 ## Locked private-beta decisions
 
-Treat these as current decisions unless the user explicitly changes them:
+Treat these as current decisions unless the user explicitly changes them.
+Navigation, user-facing terminology, and confirmation defaults are frozen in
+more detail by `docs/decisions/0001-private-beta-interaction-contract.md`.
 
 - Primary launch audience: creator-consultants with recurring client work.
 - Client surface: responsive web/PWA with browser text and microphone capture.
@@ -263,7 +267,7 @@ Before completing work, run the repository's formatter/linter, type checker, rel
 
 - Keep `slipwell-specification.md` aligned with approved product behavior.
 - Keep `implementation-backlog.md` aligned with material issue changes, but treat GitHub as the live execution state.
-- Record durable architecture or product decisions in a discoverable decision record once that convention exists.
+- Record durable architecture or product decisions in `docs/decisions/`, numbered sequentially, stating status, evidence, reasoning, and consequences. Mark a decision provisional when it rests on reasoning rather than evidence, and name what would confirm it.
 - Update this file when a cross-repository command, architecture choice, or guardrail changes.
 - Do not rewrite research documents to match later decisions; they are historical inputs.
 - Avoid duplicating large parts of the specification in code comments or README files. Link to the relevant requirement instead.
