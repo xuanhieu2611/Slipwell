@@ -206,7 +206,7 @@ The private beta has seven primary surfaces:
 | Slipping signal | A current, explainable warning generated when a rule is met. |
 | Retainer | A recurring client project template with a cadence, deliverables, and cycle history. |
 | Retainer cycle | One concrete period of a retainer, initially a calendar month. |
-| Top 3 | Up to three user-chosen focus items for a local day. |
+| Top 3 | Up to three user-chosen focus items for a local day. Domain term only; the interface calls this "focus" per [DR-0001](./docs/decisions/0001-private-beta-interaction-contract.md). |
 | Domain | A light top-level context such as Work, Personal, Family, or a user-created label. |
 
 ### 5.1 Record relationships
@@ -470,6 +470,8 @@ Today uses the workspace timezone and explicitly displays the date. It handles d
 **TOD-02 — Top 3**  
 The user can select zero to three tasks, projects, retainer deliverables, or slipping signals as focus items. Slipwell may suggest items but cannot replace the user's selection automatically.
 
+Rendered as "your focus"; "Top 3" is not user-facing. Each focus item states who added it and when, and a suggestion renders outside the focus list, explains the rule that produced it, and can be declined without anything else taking the slot. Pass A found that a section-level "chosen by you" label alone was not believed.
+
 **TOD-03 — Sections**  
 Today must include:
 
@@ -588,6 +590,12 @@ The default is "retain as overdue and suggest carry forward." Silent deletion an
 
 **RET-05 — Cycle health**  
 Each active cycle displays completion percentage, due-soon count, overdue count, carryovers, and attention status.
+
+**RET-08 — The forward promise must be visible**  
+A retainer surface states, without the user having to act, when the next cycle opens, which deliverables it will generate, and that generation happens exactly once. Template editing is reachable from the retainer itself, and saving an edit names the cycles it affects and the cycles it does not. Pass A found that a retrospective-only surface reads as a monthly reminder, which erases the product's primary differentiator; see [DR-0001](./docs/decisions/0001-private-beta-interaction-contract.md).
+
+**RET-09 — Carryover provenance is stated, not implied**  
+Wherever a carried deliverable appears, the interface states how many copies exist, which record is the original, and where the other one lives. Placing the original and the copy on adjacent surfaces is not sufficient.
 
 **RET-06 — Exceptions**  
 The user can skip a cycle, alter dates for one cycle, or pause the retainer without rewriting the template.
@@ -829,26 +837,40 @@ Settings explains which categories can be sent to AI providers. Sensitive notes 
 
 ### 8.1 Primary navigation
 
-Desktop:
+Frozen for the private beta by
+[DR-0001](./docs/decisions/0001-private-beta-interaction-contract.md).
+
+Desktop, in order:
 
 - Today
 - Review
+- Slipping
 - Tasks
 - Projects
-- People
+- Retainers
 - Notes
-- Search
-- Settings
 
-A persistent Capture button and keyboard shortcut are available from every surface.
+The three attention surfaces lead. Retainers is a top-level destination even
+though a retainer is a project in the domain model, because it is the workflow
+the beta must prove and because closing a cycle has no equivalent in Projects.
+
+People is not a primary destination. Person pages exist and are reached from
+the records that mention a person, and from search, which keeps People the
+lightweight contextual record the beta scope requires rather than implying a
+contact book.
+
+A persistent Capture button and keyboard shortcut are available from every
+surface. Search and Settings are utility surfaces rather than content
+destinations: Search is in the top bar and on a keyboard shortcut, Settings is
+under the account menu.
 
 Mobile:
 
 - Today
-- Tasks
-- Projects
+- Retainers
+- Capture
+- Slipping
 - Review
-- More
 
 Capture is the prominent center action. Search is accessible from the top bar and system integrations.
 

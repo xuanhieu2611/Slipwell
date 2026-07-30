@@ -5,7 +5,6 @@ export type ViewName =
   | "projects"
   | "retainers"
   | "slipping"
-  | "people"
   | "notes";
 
 export type CaptureMode = "text" | "voice";
@@ -15,6 +14,7 @@ export type CaptureStage =
   | "compose"
   | "recording"
   | "voice-ready"
+  | "permission-denied"
   | "processing"
   | "proposal";
 
@@ -35,6 +35,8 @@ export type FocusItem = {
   eyebrow: string;
   detail: string;
   tone: "coral" | "blue" | "lime";
+  /** Specification 7.5: every focus item states who put it there. */
+  chosenAt: string;
 };
 
 export type FiledTask = {
@@ -56,7 +58,10 @@ export type RetainerDraft = {
   name: string;
   client: string;
   startsOn: string;
+  /** Applies to cycles that have not opened yet. */
   templates: DeliverableTemplate[];
+  /** Frozen when the current cycle opened; a template edit must never alter it. */
+  currentCycleDeliverables: DeliverableTemplate[];
 };
 
 export type RolloverResolution = "carry" | "overdue" | "cancel";

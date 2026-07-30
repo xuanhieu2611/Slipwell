@@ -285,7 +285,10 @@ a:focus-visible {
   border: 1px solid var(--line);
   border-radius: 14px;
   color: var(--ink);
-  font-size: 0.8rem;
+  /* iOS Safari zooms the viewport when a focused control computes below 16px
+     and does not zoom back out on blur. Page-scale suppression would break
+     WCAG 2.2 SC 1.4.4, so the floor lives here instead. */
+  font-size: 1rem;
   font-weight: 650;
   letter-spacing: normal;
   min-height: 46px;

@@ -5,9 +5,11 @@ type TodayViewProps = {
   focusItems: FocusItem[];
   filedTask: FiledTask | null;
   isFiledTaskFocused: boolean;
+  isSuggestionDeclined: boolean;
   reviewCount: number;
   slippingCount: number;
   onAddToTopThree: () => void;
+  onDeclineSuggestion: () => void;
   onCapture: () => void;
   onOpenReview: () => void;
   onOpenSlipping: () => void;
@@ -41,14 +43,18 @@ export function TodayView({
   focusItems,
   filedTask,
   isFiledTaskFocused,
+  isSuggestionDeclined,
   reviewCount,
   slippingCount,
   onAddToTopThree,
+  onDeclineSuggestion,
   onCapture,
   onOpenReview,
   onOpenSlipping,
 }: TodayViewProps) {
   const availableSlots = 3 - focusItems.length;
+  const suggestion =
+    availableSlots > 0 && filedTask && !isSuggestionDeclined ? filedTask : null;
 
   return (
     <main id="main-content" className="min-w-0 flex-1 px-4 pb-32 pt-6 sm:px-7 lg:px-10 lg:pb-12 lg:pt-9">
@@ -77,7 +83,10 @@ export function TodayView({
               <div className="flex items-center justify-between border-b border-[var(--line)] px-5 py-5 sm:px-6">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="grid size-7 place-items-center rounded-full bg-[var(--lime)] text-xs font-black">
+                    <span
+                      className="grid size-7 place-items-center rounded-full bg-[var(--lime)] text-xs font-black"
+                      aria-hidden="true"
+                    >
                       3
                     </span>
                     <h2 id="top-three-heading" className="section-title">
@@ -85,10 +94,16 @@ export function TodayView({
                     </h2>
                   </div>
                   <p className="mt-1 pl-9 text-xs text-[var(--muted)]">
-                    Chosen by you · {availableSlots} {availableSlots === 1 ? "spot" : "spots"} open
+                    {focusItems.length} of 3 chosen by you ·{" "}
+                    {availableSlots === 0
+                      ? "full"
+                      : `${availableSlots} ${availableSlots === 1 ? "spot" : "spots"} open`}
+                  </p>
+                  <p className="mt-1 pl-9 text-xs text-[var(--muted)]">
+                    Slipwell can suggest. It never puts anything here for you.
                   </p>
                 </div>
-                <button type="button" className="icon-button" aria-label="Top 3 options">
+                <button type="button" className="icon-button" aria-label="Focus options">
                   <Icon name="dots" />
                 </button>
               </div>
@@ -113,6 +128,9 @@ export function TodayView({
                       <p className="mt-1 text-xs text-[var(--muted)]">
                         {item.eyebrow} <span aria-hidden="true">·</span> {item.detail}
                       </p>
+                      <p className="mt-1 text-[11px] text-[var(--muted-light)]">
+                        You added this at {item.chosenAt}
+                      </p>
                     </div>
                     <span className="hidden rounded-full bg-[var(--canvas)] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--muted)] sm:block">
                       Focus
@@ -121,16 +139,54 @@ export function TodayView({
                 ))}
               </ol>
 
-              {availableSlots > 0 ? (
+              {suggestion ? (
+                <div
+                  className="border-t border-dashed border-[var(--line-strong)] bg-[var(--canvas)] px-5 py-4 sm:px-6"
+                  aria-labelledby="focus-suggestion-heading"
+                  role="group"
+                >
+                  <p className="eyebrow mb-1 text-[var(--blue)]">
+                    Suggested · not added
+                  </p>
+                  <p
+                    id="focus-suggestion-heading"
+                    className="text-sm font-semibold"
+                  >
+                    {suggestion.title}
+                  </p>
+                  <p className="mt-1 text-xs leading-5 text-[var(--muted)]">
+                    Suggested because it is due Friday and your Acme check-in is
+                    at 11:00 today. It stays out of your focus until you add it.
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={onAddToTopThree}
+                      className="rounded-full bg-[var(--ink)] px-4 py-2.5 text-xs font-black text-white transition hover:-translate-y-0.5"
+                    >
+                      Add to my focus
+                    </button>
+                    <button
+                      type="button"
+                      onClick={onDeclineSuggestion}
+                      className="rounded-full border border-[var(--line-strong)] px-4 py-2.5 text-xs font-bold text-[var(--muted)] transition hover:text-[var(--ink)]"
+                    >
+                      Not today
+                    </button>
+                  </div>
+                </div>
+              ) : availableSlots > 0 ? (
                 <button
                   type="button"
-                  onClick={filedTask ? onAddToTopThree : onCapture}
+                  onClick={onCapture}
                   className="flex min-h-14 w-full items-center gap-3 border-t border-dashed border-[var(--line-strong)] px-5 text-left text-sm font-semibold text-[var(--muted)] transition hover:bg-[var(--canvas)] hover:text-[var(--ink)] sm:px-6"
                 >
                   <span className="grid size-7 place-items-center rounded-full border border-dashed border-current">
                     <Icon name="plus" size={15} />
                   </span>
-                  {filedTask ? `Add “${filedTask.title}”` : "Choose one more focus item"}
+                  {isSuggestionDeclined
+                    ? "Slot left open. Choose one more focus item"
+                    : "Choose one more focus item"}
                 </button>
               ) : null}
             </section>
@@ -156,14 +212,20 @@ export function TodayView({
                       Due Friday · {filedTask.project} · {filedTask.person}
                     </p>
                   </div>
-                  <button
-                    type="button"
-                    onClick={onAddToTopThree}
-                    disabled={isFiledTaskFocused}
-                    className="shrink-0 rounded-full bg-[var(--lime)] px-4 py-2.5 text-xs font-black text-[var(--ink)] transition hover:-translate-y-0.5 disabled:cursor-default disabled:opacity-55"
-                  >
-                    {isFiledTaskFocused ? "In Top 3" : "Add to Top 3"}
-                  </button>
+                  {suggestion ? (
+                    <p className="shrink-0 text-xs font-semibold text-white/55">
+                      Suggested for your focus above
+                    </p>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={onAddToTopThree}
+                      disabled={isFiledTaskFocused}
+                      className="shrink-0 rounded-full bg-[var(--lime)] px-4 py-2.5 text-xs font-black text-[var(--ink)] transition hover:-translate-y-0.5 disabled:cursor-default disabled:opacity-55"
+                    >
+                      {isFiledTaskFocused ? "In your focus" : "Add to my focus"}
+                    </button>
+                  )}
                 </div>
               </section>
             ) : (
@@ -235,7 +297,9 @@ export function TodayView({
               <span className="min-w-0 flex-1">
                 <span className="block text-sm font-bold">Review needs you</span>
                 <span className="mt-1 block text-xs leading-5 text-[var(--muted)]">
-                  One ambiguous person and one capture failure.
+                  {reviewCount <= 1
+                    ? "One capture failure needs a retry."
+                    : "One ambiguous person and one capture failure."}
                 </span>
               </span>
               <Icon name="arrow" size={17} />

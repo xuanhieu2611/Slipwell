@@ -12,6 +12,7 @@ export const initialFocusItems: FocusItem[] = [
     eyebrow: "Content",
     detail: "Deep work · 90 min",
     tone: "coral",
+    chosenAt: "8:04 AM",
   },
   {
     id: "northstar-review",
@@ -19,6 +20,7 @@ export const initialFocusItems: FocusItem[] = [
     eyebrow: "Client",
     detail: "Cycle closes in 3 days",
     tone: "blue",
+    chosenAt: "8:05 AM",
   },
 ];
 
@@ -34,6 +36,11 @@ export const defaultProposal: Proposal = {
   confidence: 88,
 };
 
+/**
+ * Frozen by the private-beta interaction contract: seven destinations, with the
+ * attention surfaces first. People is deliberately absent — person pages are
+ * reachable from the records that mention them, not from primary navigation.
+ */
 export const navigationItems: Array<{
   id: ViewName;
   label: string;
@@ -41,11 +48,10 @@ export const navigationItems: Array<{
 }> = [
   { id: "today", label: "Today", glyph: "⌂" },
   { id: "review", label: "Review", glyph: "◇" },
+  { id: "slipping", label: "Slipping", glyph: "!" },
   { id: "tasks", label: "Tasks", glyph: "✓" },
   { id: "projects", label: "Projects", glyph: "▦" },
   { id: "retainers", label: "Retainers", glyph: "↻" },
-  { id: "slipping", label: "Slipping", glyph: "!" },
-  { id: "people", label: "People", glyph: "◌" },
   { id: "notes", label: "Notes", glyph: "≡" },
 ];
 
