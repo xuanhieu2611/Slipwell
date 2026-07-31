@@ -2,6 +2,7 @@
   "name": "slipwell",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "engines": {
     "node": ">=24 <25",
     "npm": ">=11 <12"
@@ -13,6 +14,7 @@
     "format:check": "prettier --check .",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
+    "db:safety": "node --experimental-strip-types scripts/check-database-safety.ts",
     "test": "npm run test:unit",
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
