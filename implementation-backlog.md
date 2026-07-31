@@ -250,20 +250,26 @@ priority: P0
 size: M
 labels: type:infrastructure,area:platform,priority:P0
 -->
-## SLIP-007 — Configure development, staging, deployment, and secrets
+## SLIP-007 — Configure production deployment and secrets
 
 ### Outcome
 
-Provide reproducible environments without leaking credentials.
+Provide a reproducible founder-operated production environment without leaking
+credentials.
 
 ### Acceptance criteria
 
-- [ ] Development and staging environments are isolated.
-- [ ] Deployment pipeline runs database-safe checks before release.
-- [ ] Secrets are stored outside the repository and separated by environment.
-- [ ] Preview deployments cannot access production data or tokens.
-- [ ] Rollback procedure is documented and tested once in staging.
-- [ ] Production creation remains a deliberate later action.
+- [ ] One Vercel production project deploys the reviewed `main` branch.
+- [ ] Required pull-request checks run dependency, secret, database-safety, and
+      application quality checks before release.
+- [ ] Production secrets are stored outside the repository and scoped to
+      Vercel Production or the owning provider.
+- [ ] Preview deployments cannot access production data or application/provider
+      credentials.
+- [ ] Application rollback is documented and tested once in production, then
+      the latest deployment is restored.
+- [ ] The single-environment exception and triggers for adding staging are
+      recorded in DR-0002.
 
 ### Dependencies
 

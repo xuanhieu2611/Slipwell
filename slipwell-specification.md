@@ -1565,7 +1565,10 @@ Background workers call domain services rather than updating tables ad hoc.
 - Use secure, HTTP-only, same-site cookies on web.
 - Maintain dependency and secret scanning in CI.
 - Back up Postgres and test restoration.
-- Separate production, staging, and local environments.
+- During founder-only development, use the single hosted production environment
+  approved in DR-0002. Local development uses synthetic data and preview
+  deployments have no persistent service credentials. Introduce staging only
+  after DR-0002 is explicitly superseded.
 
 ### 13.2 Privacy rules
 

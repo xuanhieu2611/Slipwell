@@ -2,6 +2,7 @@
 coverage/
 node_modules/
 playwright-report/
+results.sarif
 test-results/
 
 # Product and research Markdown is intentionally hand-wrapped.

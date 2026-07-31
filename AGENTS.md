@@ -81,6 +81,12 @@ more detail by `docs/decisions/0001-private-beta-interaction-contract.md`.
 - People are lightweight contextual records; no contact-book sync or automatic merges.
 - Keyword search precedes semantic search and grounded chat.
 - Free private beta precedes paid-beta billing unless the product decision changes.
+- Founder-only infrastructure uses one hosted production environment, as
+  recorded in `docs/decisions/0002-founder-only-production-environment.md`.
+  Do not create a staging environment or interpret later backlog references as
+  authorization to do so unless the user explicitly supersedes that decision.
+  Local development and credential-free Vercel previews are not persistent
+  data environments.
 
 Several founder choices remain intentionally open in specification section 20, including invoicing, workspace separation, audio/transcript retention, additional sensitive note types, beta locale, beta billing, and stop criteria. Do not settle them implicitly as a side effect of implementation.
 

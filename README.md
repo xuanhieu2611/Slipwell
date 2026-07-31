@@ -25,10 +25,13 @@ npm run dev
 Open [http://localhost:3000](http://localhost:3000). Typed capture remains
 available in browsers where microphone access is unavailable or denied.
 
-`NEXT_PUBLIC_APP_URL` is required and must be an absolute HTTP(S) URL. Startup
-and production builds fail with a focused error when required configuration is
-missing or invalid. Keep real secrets in ignored `.env.local` files; only safe
-example values belong in `.env.example`.
+`SLIPWELL_ENVIRONMENT` and `NEXT_PUBLIC_APP_URL` are required. The environment
+must be `local`, `preview`, or `production`, and the URL must be an absolute
+HTTP(S) URL. Production requires HTTPS. Startup and production builds fail with
+a focused error when required configuration is missing, invalid, or exposes a
+known production-only credential to a local or preview build. Keep real secrets
+in ignored `.env.local` files; only safe example values belong in
+`.env.example`.
 
 ## Commands
 
@@ -43,6 +46,7 @@ example values belong in `.env.example`.
 | `npm test` | Run unit tests once |
 | `npm run test:unit:watch` | Run unit tests in watch mode |
 | `npm run test:e2e` | Run Playwright browser tests |
+| `npm run db:safety` | Reject malformed or destructive database migrations |
 | `npm run quality` | Run formatting, lint, types, unit tests, and build |
 | `npm run ci` | Run every pull-request quality gate, including E2E tests |
 
@@ -79,6 +83,22 @@ must call module application services rather than updating persistence directly.
 
 Product behavior is governed by [`slipwell-specification.md`](slipwell-specification.md),
 and active work is scoped by the corresponding GitHub issue.
+
+## Deployment and environments
+
+Slipwell currently has one persistent hosted environment: production on
+Vercel. Local development uses synthetic data, and Vercel preview deployments
+must remain free of application, database, OAuth, and provider credentials.
+Production secrets are scoped to Vercel's Production environment and are never
+committed.
+
+Every release reaches `main` through a pull request whose required CI check runs
+quality gates, dependency auditing, and the database migration safety policy.
+The deployment and rollback procedure is documented in
+[`docs/runbooks/deployment-and-rollback.md`](docs/runbooks/deployment-and-rollback.md).
+The single-environment decision and the conditions for revisiting it are
+recorded in
+[`DR-0002`](docs/decisions/0002-founder-only-production-environment.md).
 
 ## Prototype references
 
