@@ -25,8 +25,7 @@ export const initialFocusItems: FocusItem[] = [
 ];
 
 export const defaultProposal: Proposal = {
-  source:
-    "Remind me Friday morning to send Sarah the Acme homepage draft.",
+  source: "Remind me Friday morning to send Sarah the Acme homepage draft.",
   cleanedText: "Send Sarah the Acme homepage draft",
   recordType: "Task",
   title: "Send Sarah the Acme homepage draft",

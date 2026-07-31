@@ -16,8 +16,8 @@
   --lime-soft: #f2f9d9;
   --blue: #506ee5;
   --blue-soft: #edf0ff;
-  --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia,
-    serif;
+  --font-display:
+    "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
 }
 
 * {
@@ -32,10 +32,19 @@ body {
   margin: 0;
   min-width: 320px;
   background:
-    radial-gradient(circle at 84% 4%, rgba(212, 241, 95, 0.12), transparent 24rem),
+    radial-gradient(
+      circle at 84% 4%,
+      rgba(212, 241, 95, 0.12),
+      transparent 24rem
+    ),
     var(--canvas);
   color: var(--ink);
-  font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
+  font-family:
+    Inter,
+    ui-sans-serif,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
     sans-serif;
   text-rendering: optimizeLegibility;
 }

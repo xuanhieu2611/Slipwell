@@ -1,0 +1,8 @@
+.next/
+coverage/
+node_modules/
+playwright-report/
+test-results/
+
+# Product and research Markdown is intentionally hand-wrapped.
+**/*.md

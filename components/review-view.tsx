@@ -17,13 +17,17 @@ export function ReviewView({
   onUndo,
 }: ReviewViewProps) {
   return (
-    <main id="main-content" className="min-w-0 flex-1 px-4 pb-32 pt-6 sm:px-7 lg:px-10 lg:pb-12 lg:pt-9">
+    <main
+      id="main-content"
+      className="min-w-0 flex-1 px-4 pb-32 pt-6 sm:px-7 lg:px-10 lg:pb-12 lg:pt-9"
+    >
       <div className="mx-auto max-w-[1000px]">
         <header className="mb-8 lg:mb-10">
           <p className="eyebrow mb-2">Routing inbox</p>
           <h1 className="display-title">Review</h1>
           <p className="mt-2 max-w-xl text-sm leading-6 text-[var(--muted)] sm:text-base">
-            Your source stays intact. Nothing becomes a record until you approve it.
+            Your source stays intact. Nothing becomes a record until you approve
+            it.
           </p>
         </header>
 
@@ -35,7 +39,8 @@ export function ReviewView({
             <div>
               <p className="font-bold">Filing undone</p>
               <p className="mt-1 text-xs leading-5 text-[var(--muted)]">
-                The task was removed. Its original source remains available in Review.
+                The task was removed. Its original source remains available in
+                Review.
               </p>
             </div>
           </div>
@@ -46,49 +51,52 @@ export function ReviewView({
               it here as well would show one capture in two contradictory
               states. */}
           {filedTask ? null : (
-          <section aria-labelledby="needs-attention-heading">
-            <div className="mb-3 flex items-center justify-between px-1">
-              <h2 id="needs-attention-heading" className="section-label">
-                Needs attention
-              </h2>
-              <span className="count-pill">1</span>
-            </div>
-            <article className="paper-card overflow-hidden">
-              <div className="flex items-start gap-4 p-5 sm:p-6">
-                <span className="grid size-10 shrink-0 place-items-center rounded-2xl bg-[var(--coral-soft)] text-[var(--coral-deep)]">
-                  <Icon name="spark" size={19} />
-                </span>
-                <div className="min-w-0 flex-1">
-                  <div className="mb-2 flex flex-wrap items-center gap-2">
-                    <span className="status-pill bg-[var(--coral-soft)] text-[var(--coral-deep)]">
-                      Ambiguous person
-                    </span>
-                    <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--muted)]">
-                      2 minutes ago
-                    </span>
-                  </div>
-                  <h3 className="text-base font-bold tracking-[-0.015em]">
-                    Send Sarah the Acme homepage draft
-                  </h3>
-                  <p className="mt-2 line-clamp-2 text-sm leading-6 text-[var(--muted)]">
-                    “Remind me Friday morning to send Sarah the Acme homepage draft.”
-                  </p>
-                  <div className="mt-4 flex flex-wrap gap-2 text-xs">
-                    <span className="context-chip">Task · 97%</span>
-                    <span className="context-chip">Acme website · 94%</span>
-                    <span className="context-chip border-[var(--coral)]">Sarah · 2 matches</span>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={onReviewAmbiguity}
-                  className="secondary-button shrink-0"
-                >
-                  Review
-                </button>
+            <section aria-labelledby="needs-attention-heading">
+              <div className="mb-3 flex items-center justify-between px-1">
+                <h2 id="needs-attention-heading" className="section-label">
+                  Needs attention
+                </h2>
+                <span className="count-pill">1</span>
               </div>
-            </article>
-          </section>
+              <article className="paper-card overflow-hidden">
+                <div className="flex items-start gap-4 p-5 sm:p-6">
+                  <span className="grid size-10 shrink-0 place-items-center rounded-2xl bg-[var(--coral-soft)] text-[var(--coral-deep)]">
+                    <Icon name="spark" size={19} />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="mb-2 flex flex-wrap items-center gap-2">
+                      <span className="status-pill bg-[var(--coral-soft)] text-[var(--coral-deep)]">
+                        Ambiguous person
+                      </span>
+                      <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--muted)]">
+                        2 minutes ago
+                      </span>
+                    </div>
+                    <h3 className="text-base font-bold tracking-[-0.015em]">
+                      Send Sarah the Acme homepage draft
+                    </h3>
+                    <p className="mt-2 line-clamp-2 text-sm leading-6 text-[var(--muted)]">
+                      “Remind me Friday morning to send Sarah the Acme homepage
+                      draft.”
+                    </p>
+                    <div className="mt-4 flex flex-wrap gap-2 text-xs">
+                      <span className="context-chip">Task · 97%</span>
+                      <span className="context-chip">Acme website · 94%</span>
+                      <span className="context-chip border-[var(--coral)]">
+                        Sarah · 2 matches
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={onReviewAmbiguity}
+                    className="secondary-button shrink-0"
+                  >
+                    Review
+                  </button>
+                </div>
+              </article>
+            </section>
           )}
 
           <section aria-labelledby="ready-heading">
@@ -142,7 +150,8 @@ export function ReviewView({
                   </p>
                   <h3 className="text-base font-bold">Voice capture · 0:24</h3>
                   <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
-                    Your original audio is still attached to this prototype item. Try processing it again.
+                    Your original audio is still attached to this prototype
+                    item. Try processing it again.
                   </p>
                 </div>
                 <button
@@ -169,7 +178,9 @@ export function ReviewView({
                   <Icon name="check" size={19} />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <h3 className="truncate text-base font-bold">{filedTask.title}</h3>
+                  <h3 className="truncate text-base font-bold">
+                    {filedTask.title}
+                  </h3>
                   <p className="mt-1 text-xs text-[var(--muted)]">
                     Task · {filedTask.project} · Due Friday
                   </p>

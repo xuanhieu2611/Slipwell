@@ -309,8 +309,8 @@ function NextCyclePanel({
       <div className="px-5 py-5 sm:px-6">
         <p className="text-sm leading-6">
           It will create {retainer.templates.length}{" "}
-          {retainer.templates.length === 1 ? "deliverable" : "deliverables"} from
-          your templates, then track each one until it is finished:
+          {retainer.templates.length === 1 ? "deliverable" : "deliverables"}{" "}
+          from your templates, then track each one until it is finished:
         </p>
         <ul className="mt-3 space-y-2">
           {retainer.templates.map((template) => (
@@ -645,10 +645,7 @@ function RetainerDetail({
   const nextCycleLabel = monthNameFormatter.format(nextCycleStart);
   const nextCycleOpensOn = cycleStartFormatter.format(nextCycleStart);
 
-  const historyFor = (
-    title: string,
-    resolution: RolloverResolution | null,
-  ) => {
+  const historyFor = (title: string, resolution: RolloverResolution | null) => {
     if (resolution === "carry") {
       return {
         detail: `Original · Stays here in July. One linked copy now sits in the ${currentCycleLabel} cycle.`,

@@ -31,7 +31,9 @@ test("every focus item states that the user chose it", async ({ page }) => {
 
   await expect(focus.getByText(/2 of 3 chosen by you/)).toBeVisible();
   await expect(
-    focus.getByText("Slipwell can suggest. It never puts anything here for you."),
+    focus.getByText(
+      "Slipwell can suggest. It never puts anything here for you.",
+    ),
   ).toBeVisible();
   await expect(focus.getByText(/^You added this at /)).toHaveCount(2);
 });
@@ -87,9 +89,7 @@ test("the retainer states what the next cycle will generate", async ({
   await expect(
     nextCycle.getByText(/will create 2 deliverables from your templates/),
   ).toBeVisible();
-  await expect(
-    nextCycle.getByText(/generated exactly once/),
-  ).toBeVisible();
+  await expect(nextCycle.getByText(/generated exactly once/)).toBeVisible();
   await expect(nextCycle.getByText("Not a monthly reminder")).toBeVisible();
 });
 
@@ -143,7 +143,9 @@ test("a carryover states its copy count and where the original stayed", async ({
   await page
     .getByLabel("Resolution for July campaign handoff")
     .selectOption("carry");
-  await page.getByLabel("Resolution for July strategy call").selectOption("cancel");
+  await page
+    .getByLabel("Resolution for July strategy call")
+    .selectOption("cancel");
   await page.getByRole("button", { name: /Close July/ }).click();
 
   await expect(
@@ -176,7 +178,5 @@ test("the Tasks placeholder names what belongs there and where a filed task is",
   await expect(
     page.getByText(/empty because it is not built yet/),
   ).toBeVisible();
-  await expect(
-    page.getByText(/was filed and is safe/),
-  ).toBeVisible();
+  await expect(page.getByText(/was filed and is safe/)).toBeVisible();
 });

@@ -58,12 +58,17 @@ function Navigation({
               aria-current={view === item.id ? "page" : undefined}
               className={`nav-item ${view === item.id ? "nav-item-active" : ""}`}
             >
-              <span className="grid size-7 place-items-center text-base" aria-hidden="true">
+              <span
+                className="grid size-7 place-items-center text-base"
+                aria-hidden="true"
+              >
                 {item.glyph}
               </span>
               <span className="flex-1">{item.label}</span>
               {item.id === "review" ? (
-                <span className={`nav-count ${view === item.id ? "bg-white/20 text-white" : ""}`}>
+                <span
+                  className={`nav-count ${view === item.id ? "bg-white/20 text-white" : ""}`}
+                >
                   {reviewCount}
                 </span>
               ) : null}
@@ -100,7 +105,10 @@ function PlaceholderView({
   const title = view[0].toUpperCase() + view.slice(1);
 
   return (
-    <main id="main-content" className="grid min-w-0 flex-1 place-items-center px-5 pb-32 lg:pb-10">
+    <main
+      id="main-content"
+      className="grid min-w-0 flex-1 place-items-center px-5 pb-32 lg:pb-10"
+    >
       <div className="max-w-md text-center">
         <span className="mx-auto mb-5 grid size-14 place-items-center rounded-[20px] bg-[var(--blue-soft)] text-2xl">
           {navigationItems.find((item) => item.id === view)?.glyph}
@@ -118,7 +126,11 @@ function PlaceholderView({
             <strong>Recently filed</strong> in Review.
           </p>
         ) : null}
-        <button type="button" onClick={onCapture} className="primary-button mx-auto mt-6">
+        <button
+          type="button"
+          onClick={onCapture}
+          className="primary-button mx-auto mt-6"
+        >
           <Icon name="plus" size={17} />
           Try capture
         </button>
@@ -150,7 +162,9 @@ function MobileNavigation({
               aria-current={view === item.id ? "page" : undefined}
               className={`mobile-nav-item ${view === item.id ? "text-[var(--ink)]" : ""}`}
             >
-              <span className="text-lg" aria-hidden="true">{item.glyph}</span>
+              <span className="text-lg" aria-hidden="true">
+                {item.glyph}
+              </span>
               {item.label}
             </button>
           </li>
@@ -173,7 +187,9 @@ function MobileNavigation({
               aria-current={view === item.id ? "page" : undefined}
               className={`mobile-nav-item ${view === item.id ? "text-[var(--ink)]" : ""}`}
             >
-              <span className="text-lg" aria-hidden="true">{item.glyph}</span>
+              <span className="text-lg" aria-hidden="true">
+                {item.glyph}
+              </span>
               {item.label}
             </button>
           </li>
@@ -187,10 +203,8 @@ function prepareProposal(source: string): Proposal {
   const normalized = source.trim();
   const sourceWithoutPeriod = normalized.replace(/\.$/, "");
   const cleaned =
-    sourceWithoutPeriod.replace(
-      /^remind me friday morning to /i,
-      "",
-    ) || defaultProposal.cleanedText;
+    sourceWithoutPeriod.replace(/^remind me friday morning to /i, "") ||
+    defaultProposal.cleanedText;
   const title = cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
 
   return {
@@ -227,19 +241,20 @@ export function SlipwellPrototype() {
   const isFiledTaskFocused = filedTask
     ? topThreeIds.includes(filedTask.id)
     : false;
-  const focusItems: FocusItem[] = filedTask && isFiledTaskFocused
-    ? [
-        ...initialFocusItems,
-        {
-          id: filedTask.id,
-          title: filedTask.title,
-          eyebrow: "Acme",
-          detail: "Due Friday",
-          tone: "lime",
-          chosenAt: "9:42 AM",
-        },
-      ]
-    : initialFocusItems;
+  const focusItems: FocusItem[] =
+    filedTask && isFiledTaskFocused
+      ? [
+          ...initialFocusItems,
+          {
+            id: filedTask.id,
+            title: filedTask.title,
+            eyebrow: "Acme",
+            detail: "Due Friday",
+            tone: "lime",
+            chosenAt: "9:42 AM",
+          },
+        ]
+      : initialFocusItems;
 
   // The filing toast is transient confirmation, not a persistent surface, so it
   // must not follow the user onto another view and cover its content. Undo
@@ -357,9 +372,7 @@ export function SlipwellPrototype() {
   // Retainer invariant: a template edit applies to cycles that have not opened
   // yet and must leave the generated current cycle untouched.
   const updateRetainerTemplates = (templates: DeliverableTemplate[]) => {
-    setRetainer((current) =>
-      current ? { ...current, templates } : current,
-    );
+    setRetainer((current) => (current ? { ...current, templates } : current));
   };
 
   const applySignalAction = (signalId: string, action: SignalAction) => {
@@ -385,7 +398,8 @@ export function SlipwellPrototype() {
           },
           snooze: {
             status: "snoozed" as const,
-            outcome: "Snoozed until Monday, August 3. It will not regenerate before then.",
+            outcome:
+              "Snoozed until Monday, August 3. It will not regenerate before then.",
           },
           dismiss: {
             status: "dismissed" as const,
@@ -393,7 +407,8 @@ export function SlipwellPrototype() {
           },
           pause: {
             status: "obsolete" as const,
-            outcome: "Paused intentionally. Inactivity signals will not regenerate.",
+            outcome:
+              "Paused intentionally. Inactivity signals will not regenerate.",
           },
         };
 
@@ -475,10 +490,16 @@ export function SlipwellPrototype() {
             onNavigate={navigate}
           />
           <div className="mt-auto">
-            <button type="button" onClick={openCapture} className="primary-button mb-5 w-full justify-center">
+            <button
+              type="button"
+              onClick={openCapture}
+              className="primary-button mb-5 w-full justify-center"
+            >
               <Icon name="plus" size={17} />
               Capture
-              <span className="ml-auto rounded-md bg-white/15 px-1.5 py-0.5 text-[9px]">C</span>
+              <span className="ml-auto rounded-md bg-white/15 px-1.5 py-0.5 text-[9px]">
+                C
+              </span>
             </button>
             <div className="flex items-center gap-3 border-t border-[var(--line)] pt-5">
               <span className="grid size-9 place-items-center rounded-full bg-[var(--blue-soft)] text-xs font-black text-[var(--blue)]">
@@ -486,7 +507,9 @@ export function SlipwellPrototype() {
               </span>
               <div className="min-w-0">
                 <p className="truncate text-xs font-bold">Demo workspace</p>
-                <p className="mt-0.5 text-[10px] text-[var(--muted)]">Vancouver · 9:42 AM</p>
+                <p className="mt-0.5 text-[10px] text-[var(--muted)]">
+                  Vancouver · 9:42 AM
+                </p>
               </div>
             </div>
           </div>
@@ -542,7 +565,9 @@ export function SlipwellPrototype() {
           className="fixed bottom-24 left-1/2 z-40 flex w-[calc(100%-2rem)] max-w-md -translate-x-1/2 items-center gap-3 rounded-[18px] bg-[var(--ink)] p-3 pl-4 text-white shadow-[0_18px_70px_rgba(23,24,20,0.3)] lg:bottom-7"
           role="status"
         >
-          <span className={`size-2 shrink-0 rounded-full ${notice === "filed" ? "bg-[var(--lime)]" : "bg-[var(--blue)]"}`} />
+          <span
+            className={`size-2 shrink-0 rounded-full ${notice === "filed" ? "bg-[var(--lime)]" : "bg-[var(--blue)]"}`}
+          />
           <p className="min-w-0 flex-1 text-xs font-semibold">
             {notice === "filed"
               ? "Task filed and added to Today."

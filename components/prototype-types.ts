@@ -72,18 +72,10 @@ export type RolloverDecisions = {
 };
 
 export type SignalStatus =
-  | "active"
-  | "resolved"
-  | "snoozed"
-  | "dismissed"
-  | "obsolete";
+  "active" | "resolved" | "snoozed" | "dismissed" | "obsolete";
 
 export type SignalAction =
-  | "act"
-  | "snooze"
-  | "dismiss"
-  | "change-cadence"
-  | "pause";
+  "act" | "snooze" | "dismiss" | "change-cadence" | "pause";
 
 export type SlippingSignal = {
   id: string;

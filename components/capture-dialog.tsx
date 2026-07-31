@@ -2,11 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { Icon } from "./icon";
-import type {
-  CaptureMode,
-  CaptureStage,
-  Proposal,
-} from "./prototype-types";
+import type { CaptureMode, CaptureStage, Proposal } from "./prototype-types";
 
 type CaptureDialogProps = {
   stage: CaptureStage;
@@ -26,8 +22,8 @@ type CaptureDialogProps = {
 };
 
 const waveform = [
-  12, 24, 17, 38, 28, 45, 18, 31, 48, 23, 36, 18, 41, 29, 16, 34, 21, 42,
-  27, 14, 32, 19, 39, 25,
+  12, 24, 17, 38, 28, 45, 18, 31, 48, 23, 36, 18, 41, 29, 16, 34, 21, 42, 27,
+  14, 32, 19, 39, 25,
 ];
 
 function DialogHeader({
@@ -45,11 +41,19 @@ function DialogHeader({
         <p className="mb-1 text-[9px] font-black uppercase tracking-[0.18em] text-[var(--muted)]">
           {eyebrow}
         </p>
-        <h2 id="capture-dialog-title" className="font-[family-name:var(--font-display)] text-xl font-bold tracking-[-0.025em] sm:text-2xl">
+        <h2
+          id="capture-dialog-title"
+          className="font-[family-name:var(--font-display)] text-xl font-bold tracking-[-0.025em] sm:text-2xl"
+        >
           {title}
         </h2>
       </div>
-      <button type="button" onClick={onClose} className="icon-button" aria-label="Close capture">
+      <button
+        type="button"
+        onClick={onClose}
+        className="icon-button"
+        aria-label="Close capture"
+      >
         <Icon name="close" size={19} />
       </button>
     </div>
@@ -81,7 +85,10 @@ function ProposalEditor({
   CaptureDialogProps,
   "proposal" | "onProposalChange" | "onAccept" | "onClose"
 >) {
-  const update = <Key extends keyof Proposal>(key: Key, value: Proposal[Key]) => {
+  const update = <Key extends keyof Proposal>(
+    key: Key,
+    value: Proposal[Key],
+  ) => {
     onProposalChange({ ...proposal, [key]: value });
   };
 
@@ -97,7 +104,9 @@ function ProposalEditor({
           <div className="border-b border-[var(--line)] bg-[var(--canvas)] p-5 md:border-b-0 md:border-r sm:p-6">
             <div className="mb-3 flex items-center justify-between">
               <p className="section-label">Your original</p>
-              <span className="status-pill bg-white text-[var(--muted)]">Preserved</span>
+              <span className="status-pill bg-white text-[var(--muted)]">
+                Preserved
+              </span>
             </div>
             <blockquote className="font-[family-name:var(--font-display)] text-lg leading-7 tracking-[-0.015em]">
               “{proposal.source}”
@@ -122,7 +131,8 @@ function ProposalEditor({
             <div>
               <p className="text-sm font-bold">Which Sarah did you mean?</p>
               <p className="mt-1 text-xs leading-5 text-[var(--muted)]">
-                Slipwell found two people. We selected Sarah Chen from the Acme project for your review.
+                Slipwell found two people. We selected Sarah Chen from the Acme
+                project for your review.
               </p>
             </div>
           </div>
@@ -135,7 +145,10 @@ function ProposalEditor({
                   aria-label="Destination"
                   value={proposal.recordType}
                   onChange={(event) =>
-                    update("recordType", event.target.value as Proposal["recordType"])
+                    update(
+                      "recordType",
+                      event.target.value as Proposal["recordType"],
+                    )
                   }
                   className="field-control"
                 >
@@ -208,7 +221,11 @@ function ProposalEditor({
             <p className="text-xs leading-5 text-[var(--muted)]">
               Accepting creates one record and keeps a link to this source.
             </p>
-            <button type="button" onClick={onAccept} className="primary-button justify-center">
+            <button
+              type="button"
+              onClick={onAccept}
+              className="primary-button justify-center"
+            >
               <Icon name="check" size={17} />
               Accept &amp; file
             </button>
@@ -363,7 +380,8 @@ export function CaptureDialog({
                   </span>
                   <p className="text-lg font-bold">Preparing a proposal…</p>
                   <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-[var(--muted)]">
-                    Separating your original from cleaned text, dates, and likely context.
+                    Separating your original from cleaned text, dates, and
+                    likely context.
                   </p>
                   <div className="mx-auto mt-6 inline-flex items-center gap-2 rounded-full bg-[var(--canvas)] px-3 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-[var(--muted)]">
                     <span className="size-1.5 rounded-full bg-[var(--coral)]" />
@@ -374,7 +392,11 @@ export function CaptureDialog({
             ) : (
               <>
                 <div className="border-b border-[var(--line)] px-5 pt-5 sm:px-7">
-                  <div className="inline-flex rounded-full bg-[var(--canvas)] p-1" role="tablist" aria-label="Capture method">
+                  <div
+                    className="inline-flex rounded-full bg-[var(--canvas)] p-1"
+                    role="tablist"
+                    aria-label="Capture method"
+                  >
                     <button
                       type="button"
                       role="tab"
@@ -430,7 +452,10 @@ export function CaptureDialog({
                     <div className="grid min-h-52 place-items-center rounded-[24px] border border-[var(--line)] bg-[var(--canvas)] px-5 py-8 text-center">
                       {stage === "recording" ? (
                         <div className="w-full">
-                          <div className="mb-6 flex h-14 items-center justify-center gap-1" aria-label="Simulated audio waveform">
+                          <div
+                            className="mb-6 flex h-14 items-center justify-center gap-1"
+                            aria-label="Simulated audio waveform"
+                          >
                             {waveform.map((height, index) => (
                               <span
                                 key={`${height}-${index}`}
@@ -439,7 +464,9 @@ export function CaptureDialog({
                               />
                             ))}
                           </div>
-                          <p className="font-mono text-2xl font-bold tabular-nums">00:12</p>
+                          <p className="font-mono text-2xl font-bold tabular-nums">
+                            00:12
+                          </p>
                           <p className="mt-2 text-xs font-bold uppercase tracking-[0.14em] text-[var(--coral-deep)]">
                             Simulated recording
                           </p>
@@ -457,7 +484,9 @@ export function CaptureDialog({
                           <span className="mx-auto mb-5 grid size-16 place-items-center rounded-full bg-[var(--lime)] text-[var(--ink)]">
                             <Icon name="check" size={25} />
                           </span>
-                          <p className="text-lg font-bold">Voice capture ready</p>
+                          <p className="text-lg font-bold">
+                            Voice capture ready
+                          </p>
                           <p className="mt-2 text-sm text-[var(--muted)]">
                             12 seconds · Simulated browser audio
                           </p>
@@ -474,8 +503,8 @@ export function CaptureDialog({
                               </p>
                               <p className="mt-2 text-xs leading-5 text-[var(--muted)]">
                                 Your browser blocked the request, so voice
-                                capture is unavailable on this device right
-                                now. Nothing you have written has been lost.
+                                capture is unavailable on this device right now.
+                                Nothing you have written has been lost.
                               </p>
                               <p className="mt-3 text-xs leading-5 text-[var(--muted)]">
                                 To turn it back on, allow microphone access for
@@ -518,7 +547,11 @@ export function CaptureDialog({
                           : "Original audio and transcript stay distinguishable."}
                       </p>
                       {stage === "voice-ready" ? (
-                        <button type="button" onClick={onProcess} className="primary-button justify-center">
+                        <button
+                          type="button"
+                          onClick={onProcess}
+                          className="primary-button justify-center"
+                        >
                           Create proposal
                           <Icon name="arrow" size={17} />
                         </button>

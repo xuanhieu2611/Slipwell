@@ -1,7 +1,4 @@
-import type {
-  SignalAction,
-  SlippingSignal,
-} from "./prototype-types";
+import type { SignalAction, SlippingSignal } from "./prototype-types";
 
 type SlippingViewProps = {
   signals: SlippingSignal[];
