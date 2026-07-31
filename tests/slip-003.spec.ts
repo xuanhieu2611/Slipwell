@@ -12,7 +12,10 @@ test("typed capture can be corrected, filed to Today, focused, and undone", asyn
   await expect(
     page.getByRole("heading", { name: "Good morning." }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Capture", exact: true }).first().click();
+  await page
+    .getByRole("button", { name: "Capture", exact: true })
+    .first()
+    .click();
 
   await page
     .getByRole("textbox", { name: "What do you want to capture?" })
@@ -73,9 +76,7 @@ test("simulated voice capture works at the 320px minimum width", async ({
 
   await page.getByRole("button", { name: "Capture something" }).click();
   await page.getByRole("tab", { name: "Voice" }).click();
-  await page
-    .getByRole("button", { name: "Start simulated recording" })
-    .click();
+  await page.getByRole("button", { name: "Start simulated recording" }).click();
 
   await expect(page.getByText("Simulated recording")).toBeVisible();
   await page.getByRole("button", { name: "Finish recording" }).click();
@@ -103,9 +104,7 @@ test("Review represents ambiguity, retryable failure, and recovery", async ({
     page.getByRole("heading", { name: "Needs attention" }),
   ).toBeVisible();
   await expect(page.getByText("Ambiguous person")).toBeVisible();
-  await expect(
-    page.getByRole("heading", { name: "Failed" }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Failed" })).toBeVisible();
   await expect(page.getByText("Transcription unavailable")).toBeVisible();
   await expect(
     page.getByText(/original audio is still attached/i),

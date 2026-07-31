@@ -57,7 +57,10 @@ export function TodayView({
     availableSlots > 0 && filedTask && !isSuggestionDeclined ? filedTask : null;
 
   return (
-    <main id="main-content" className="min-w-0 flex-1 px-4 pb-32 pt-6 sm:px-7 lg:px-10 lg:pb-12 lg:pt-9">
+    <main
+      id="main-content"
+      className="min-w-0 flex-1 px-4 pb-32 pt-6 sm:px-7 lg:px-10 lg:pb-12 lg:pt-9"
+    >
       <div className="mx-auto max-w-[1180px]">
         <header className="mb-7 flex items-start justify-between gap-4 lg:mb-10">
           <div>
@@ -79,7 +82,10 @@ export function TodayView({
 
         <div className="grid gap-5 xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.65fr)]">
           <div className="space-y-5">
-            <section className="paper-card overflow-hidden" aria-labelledby="top-three-heading">
+            <section
+              className="paper-card overflow-hidden"
+              aria-labelledby="top-three-heading"
+            >
               <div className="flex items-center justify-between border-b border-[var(--line)] px-5 py-5 sm:px-6">
                 <div>
                   <div className="flex items-center gap-2">
@@ -103,14 +109,21 @@ export function TodayView({
                     Slipwell can suggest. It never puts anything here for you.
                   </p>
                 </div>
-                <button type="button" className="icon-button" aria-label="Focus options">
+                <button
+                  type="button"
+                  className="icon-button"
+                  aria-label="Focus options"
+                >
                   <Icon name="dots" />
                 </button>
               </div>
 
               <ol className="divide-y divide-[var(--line)]">
                 {focusItems.map((item, index) => (
-                  <li key={item.id} className="group flex items-center gap-4 px-5 py-4 sm:px-6">
+                  <li
+                    key={item.id}
+                    className="group flex items-center gap-4 px-5 py-4 sm:px-6"
+                  >
                     <button
                       type="button"
                       className="grid size-7 shrink-0 place-items-center rounded-full border border-[var(--line-strong)] text-xs font-bold text-[var(--muted)] transition hover:border-[var(--ink)] hover:text-[var(--ink)]"
@@ -124,9 +137,12 @@ export function TodayView({
                       aria-hidden="true"
                     />
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold sm:text-[15px]">{item.title}</p>
+                      <p className="truncate text-sm font-semibold sm:text-[15px]">
+                        {item.title}
+                      </p>
                       <p className="mt-1 text-xs text-[var(--muted)]">
-                        {item.eyebrow} <span aria-hidden="true">·</span> {item.detail}
+                        {item.eyebrow} <span aria-hidden="true">·</span>{" "}
+                        {item.detail}
                       </p>
                       <p className="mt-1 text-[11px] text-[var(--muted-light)]">
                         You added this at {item.chosenAt}
@@ -205,7 +221,10 @@ export function TodayView({
                     <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.16em] text-white/55">
                       Just filed from Review
                     </p>
-                    <h2 id="newly-filed-heading" className="text-lg font-semibold tracking-[-0.02em]">
+                    <h2
+                      id="newly-filed-heading"
+                      className="text-lg font-semibold tracking-[-0.02em]"
+                    >
                       {filedTask.title}
                     </h2>
                     <p className="mt-2 text-sm text-white/65">
@@ -238,7 +257,9 @@ export function TodayView({
                   <Icon name="spark" />
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block text-sm font-bold">What’s on your mind?</span>
+                  <span className="block text-sm font-bold">
+                    What’s on your mind?
+                  </span>
                   <span className="mt-1 block text-xs text-[var(--muted)]">
                     Speak or type it. You can decide where it belongs after.
                   </span>
@@ -252,7 +273,10 @@ export function TodayView({
           </div>
 
           <aside className="space-y-5" aria-label="Today details">
-            <section className="paper-card p-5 sm:p-6" aria-labelledby="agenda-heading">
+            <section
+              className="paper-card p-5 sm:p-6"
+              aria-labelledby="agenda-heading"
+            >
               <div className="mb-5 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
                   <Icon name="calendar" size={19} />
@@ -260,14 +284,21 @@ export function TodayView({
                     On your calendar
                   </h2>
                 </div>
-                <span className="text-xs font-semibold text-[var(--muted)]">3 events</span>
+                <span className="text-xs font-semibold text-[var(--muted)]">
+                  3 events
+                </span>
               </div>
               <ol className="space-y-1">
                 {agenda.map((event) => (
-                  <li key={`${event.time}-${event.title}`} className="group flex gap-3 rounded-2xl px-2 py-3 transition hover:bg-[var(--canvas)]">
+                  <li
+                    key={`${event.time}-${event.title}`}
+                    className="group flex gap-3 rounded-2xl px-2 py-3 transition hover:bg-[var(--canvas)]"
+                  >
                     <div className="w-10 shrink-0 pt-0.5 text-right">
                       <p className="text-xs font-bold">{event.time}</p>
-                      <p className="text-[9px] font-bold tracking-wider text-[var(--muted)]">{event.period}</p>
+                      <p className="text-[9px] font-bold tracking-wider text-[var(--muted)]">
+                        {event.period}
+                      </p>
                     </div>
                     <span
                       className="w-0.5 shrink-0 rounded-full"
@@ -276,7 +307,9 @@ export function TodayView({
                     />
                     <div>
                       <p className="text-sm font-semibold">{event.title}</p>
-                      <p className="mt-1 text-xs text-[var(--muted)]">{event.detail}</p>
+                      <p className="mt-1 text-xs text-[var(--muted)]">
+                        {event.detail}
+                      </p>
                     </div>
                   </li>
                 ))}
@@ -295,7 +328,9 @@ export function TodayView({
                 </span>
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block text-sm font-bold">Review needs you</span>
+                <span className="block text-sm font-bold">
+                  Review needs you
+                </span>
                 <span className="mt-1 block text-xs leading-5 text-[var(--muted)]">
                   {reviewCount <= 1
                     ? "One capture failure needs a retry."

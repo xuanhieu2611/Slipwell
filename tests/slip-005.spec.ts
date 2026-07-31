@@ -53,7 +53,10 @@ test("interactive controls stay at 16px so iOS Safari does not zoom on focus", a
       .evaluate((element) =>
         Number.parseFloat(window.getComputedStyle(element).fontSize),
       );
-    expect(fontSize, `${label} must not trigger iOS focus zoom`).toBeGreaterThanOrEqual(16);
+    expect(
+      fontSize,
+      `${label} must not trigger iOS focus zoom`,
+    ).toBeGreaterThanOrEqual(16);
   }
 });
 
@@ -80,7 +83,9 @@ test("filing removes a capture from Review and undo restores it", async ({
   await nav.getByRole("button", { name: /Today/ }).click();
   const reviewTeaser = page.getByRole("button", { name: /Review needs you/ });
   await expect(reviewTeaser).toContainText("1");
-  await expect(reviewTeaser).toContainText("One capture failure needs a retry.");
+  await expect(reviewTeaser).toContainText(
+    "One capture failure needs a retry.",
+  );
   await expect(reviewTeaser).not.toContainText("ambiguous person");
 
   await nav.getByRole("button", { name: /Review/ }).click();

@@ -24,9 +24,7 @@ test("monthly retainer creation preserves explicit rollover provenance", async (
     "Next month content calendar",
   );
 
-  await page
-    .getByRole("button", { name: "Create monthly retainer" })
-    .click();
+  await page.getByRole("button", { name: "Create monthly retainer" }).click();
 
   await expect(
     page.getByRole("heading", { name: "Acme monthly marketing" }),
@@ -51,18 +49,14 @@ test("monthly retainer creation preserves explicit rollover provenance", async (
   await closeCycle.click();
 
   await expect(
-    page.getByText(
-      "July closed with every unfinished item accounted for.",
-    ),
+    page.getByText("July closed with every unfinished item accounted for."),
   ).toBeVisible();
   await expect(page.getByText("Carried over", { exact: true })).toHaveCount(2);
 
   const augustCycle = page
     .getByRole("article")
     .filter({ hasText: "August 2026" });
-  const julyCycle = page
-    .getByRole("article")
-    .filter({ hasText: "July 2026" });
+  const julyCycle = page.getByRole("article").filter({ hasText: "July 2026" });
   await expect(
     augustCycle.getByText("July campaign handoff", { exact: true }),
   ).toHaveCount(1);
