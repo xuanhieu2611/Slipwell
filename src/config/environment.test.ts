@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { EnvironmentValidationError, validateEnvironment } from "./environment";
+import {
+  EnvironmentValidationError,
+  getSupabasePublicConfiguration,
+  SupabaseConfigurationError,
+  validateEnvironment,
+} from "./environment";
 
 describe("validateEnvironment", () => {
   it("returns validated public configuration", () => {
@@ -88,6 +93,38 @@ describe("validateEnvironment", () => {
         `${key} must not be available outside production`,
       );
       expect(String(error)).not.toContain(secret);
+    }
+  });
+});
+
+describe("getSupabasePublicConfiguration", () => {
+  it("leaves the synthetic local experience disabled when both values are absent", () => {
+    expect(getSupabasePublicConfiguration({})).toBeNull();
+  });
+
+  it("returns only the public browser configuration", () => {
+    expect(
+      getSupabasePublicConfiguration({
+        NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co",
+        NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_example",
+      }),
+    ).toEqual({
+      url: "https://example.supabase.co",
+      publishableKey: "sb_publishable_example",
+    });
+  });
+
+  it("rejects a partial configuration without echoing any key", () => {
+    const key = "private-looking-public-key";
+
+    try {
+      getSupabasePublicConfiguration({
+        NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: key,
+      });
+      expect.unreachable("configuration should have failed");
+    } catch (error) {
+      expect(error).toBeInstanceOf(SupabaseConfigurationError);
+      expect(String(error)).not.toContain(key);
     }
   });
 });

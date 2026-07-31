@@ -3,7 +3,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Slipwell — Capture what matters",
-  description: "Interactive Capture → Review → Today prototype for SLIP-003.",
+  description:
+    "A private capture and attention system for recurring client work.",
 };
 
 export default function RootLayout({
