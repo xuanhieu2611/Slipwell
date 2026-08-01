@@ -11,6 +11,8 @@ client-side only; Supabase and AI providers are not connected yet.
 
 - Node.js 24
 - npm 11
+- Docker Desktop, Podman, or another Docker-compatible runtime for local
+  Supabase migration verification
 
 The repository includes an `.nvmrc` for version managers that support it.
 
@@ -47,6 +49,7 @@ in ignored `.env.local` files; only safe example values belong in
 | `npm run test:unit:watch` | Run unit tests in watch mode |
 | `npm run test:e2e` | Run Playwright browser tests |
 | `npm run db:safety` | Reject malformed or destructive database migrations |
+| `npm run db:verify` | Rebuild the local Supabase database, load synthetic seed data, and run database checks |
 | `npm run quality` | Run formatting, lint, types, unit tests, and build |
 | `npm run ci` | Run every pull-request quality gate, including E2E tests |
 
@@ -56,6 +59,17 @@ machine:
 ```sh
 npx playwright install chromium
 ```
+
+The repository pins the Supabase CLI as a development dependency. To verify
+the database locally, start a Docker-compatible runtime and run:
+
+```sh
+npx supabase start
+npm run db:verify
+```
+
+See the [core schema map and migration policy](docs/schema/core-schema.md) for
+the relational model and production recovery procedure.
 
 ## Repository structure
 
@@ -93,7 +107,8 @@ Production secrets are scoped to Vercel's Production environment and are never
 committed.
 
 Every release reaches `main` through a pull request whose required CI check runs
-quality gates, dependency auditing, and the database migration safety policy.
+quality gates, dependency auditing, a full local database rebuild with
+synthetic seed data, and the database migration safety policy.
 The deployment and rollback procedure is documented in
 [`docs/runbooks/deployment-and-rollback.md`](docs/runbooks/deployment-and-rollback.md).
 The single-environment decision and the conditions for revisiting it are

@@ -9,6 +9,7 @@ export default defineConfig([
     ".next/**",
     "node_modules/**",
     "playwright-report/**",
+    "supabase/.temp/**",
     "test-results/**",
   ]),
 ]);

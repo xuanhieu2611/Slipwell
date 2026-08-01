@@ -7,3 +7,6 @@ test-results/
 
 # Product and research Markdown is intentionally hand-wrapped.
 **/*.md
+
+# Supabase CLI local state is generated during database verification.
+supabase/.temp/
