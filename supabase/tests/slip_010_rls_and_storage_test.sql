@@ -44,7 +44,7 @@ with workspace_tables(table_name) as (
     ('slipping_signals'), ('daily_priorities'), ('search_documents'),
     ('calendar_connections'), ('calendar_sources'), ('calendar_events'),
     ('notification_preferences'), ('device_installations'),
-    ('notification_deliveries'), ('jobs'), ('exports')
+    ('notification_deliveries'), ('exports')
 ), checks as (
   select
     table_name,
@@ -83,6 +83,26 @@ with workspace_tables(table_name) as (
 select ok(passed, description)
 from checks
 order by table_name, assertion_order;
+
+select ok(
+  (select relrowsecurity from pg_class where oid = 'public.jobs'::regclass),
+  'jobs has row-level security enabled'
+);
+select ok(
+  not exists (
+    select 1 from pg_policies
+    where schemaname = 'public' and tablename = 'jobs'
+  ),
+  'jobs exposes no client read policy because payloads may contain private content'
+);
+select ok(
+  not has_table_privilege('authenticated', 'public.jobs', 'select'),
+  'jobs keeps private payloads server-only'
+);
+select ok(
+  not has_table_privilege('authenticated', 'public.jobs', 'update'),
+  'jobs keeps direct mutations server-mediated'
+);
 
 with identity_tables(table_name) as (
   values ('profiles'), ('workspaces'), ('workspace_members')
@@ -148,7 +168,7 @@ begin
     'slipping_signals', 'daily_priorities', 'search_documents',
     'calendar_connections', 'calendar_sources', 'calendar_events',
     'notification_preferences', 'device_installations',
-    'notification_deliveries', 'jobs', 'exports'
+    'notification_deliveries', 'exports'
   ] loop
     execute format('select count(*) from public.%I where workspace_id = $1', workspace_table)
       into visible_rows
@@ -212,6 +232,12 @@ $$;
 
 set local role authenticated;
 select ok(passed, description) from pg_temp.workspace_cross_tenant_checks();
+select throws_ok(
+  $$select count(*) from public.jobs$$,
+  '42501',
+  'permission denied for table jobs',
+  'authenticated clients cannot inspect any workspace job payload'
+);
 reset role;
 
 select ok(
