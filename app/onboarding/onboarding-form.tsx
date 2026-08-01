@@ -1,7 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { saveWorkspacePreferences } from "./actions";
 
 type OnboardingFormProps = Readonly<{
@@ -17,8 +16,7 @@ export function OnboardingForm({
   weekStart,
   morningTime,
 }: OnboardingFormProps) {
-  const router = useRouter();
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [currentTimezone, setCurrentTimezone] = useState(timezone);
   const [currentLocale, setCurrentLocale] = useState(locale);
@@ -27,11 +25,12 @@ export function OnboardingForm({
     morningTime.slice(0, 5),
   );
 
-  function submit(event: React.FormEvent<HTMLFormElement>) {
+  async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setMessage(null);
+    setIsPending(true);
 
-    startTransition(async () => {
+    try {
       const result = await saveWorkspacePreferences({
         timezone: currentTimezone,
         locale: currentLocale,
@@ -41,17 +40,21 @@ export function OnboardingForm({
 
       if (!result.success) {
         if (result.sessionExpired) {
-          router.replace("/sign-in?reason=session-expired");
+          window.location.assign("/sign-in?reason=session-expired");
           return;
         }
 
         setMessage(result.message);
+        setIsPending(false);
         return;
       }
 
-      router.replace("/");
-      router.refresh();
-    });
+      // Full navigation avoids a stuck pending soft-nav after the server action.
+      window.location.assign("/");
+    } catch {
+      setMessage("We could not save your preferences. Please try again.");
+      setIsPending(false);
+    }
   }
 
   return (
