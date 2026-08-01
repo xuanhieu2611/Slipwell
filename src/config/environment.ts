@@ -37,6 +37,11 @@ export type SupabasePublicConfiguration = Readonly<{
   publishableKey: string;
 }>;
 
+export type SupabaseServiceConfiguration = Readonly<{
+  url: string;
+  serviceRoleKey: string;
+}>;
+
 export class EnvironmentValidationError extends Error {
   constructor(issues: readonly string[]) {
     super(`Invalid environment configuration:\n- ${issues.join("\n- ")}`);
@@ -144,4 +149,34 @@ export function getSupabasePublicConfiguration(
   }
 
   return Object.freeze({ url: parsedUrl.data, publishableKey });
+}
+
+/**
+ * This configuration is intentionally separate from browser configuration.
+ * Call it only from a server-only module; the service role bypasses RLS.
+ */
+export function getSupabaseServiceConfiguration(
+  environment: Readonly<Record<string, string | undefined>>,
+): SupabaseServiceConfiguration | null {
+  const url = environment.NEXT_PUBLIC_SUPABASE_URL?.trim();
+  const serviceRoleKey = environment.SUPABASE_SERVICE_ROLE_KEY?.trim();
+
+  if (!url && !serviceRoleKey) {
+    return null;
+  }
+
+  if (!url || !serviceRoleKey) {
+    throw new SupabaseConfigurationError(
+      "NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be configured together",
+    );
+  }
+
+  const parsedUrl = z.url("must be a valid absolute URL").safeParse(url);
+  if (!parsedUrl.success) {
+    throw new SupabaseConfigurationError(
+      "NEXT_PUBLIC_SUPABASE_URL must be a valid absolute URL",
+    );
+  }
+
+  return Object.freeze({ url: parsedUrl.data, serviceRoleKey });
 }

@@ -35,6 +35,11 @@ known production-only credential to a local or preview build. Keep real secrets
 in ignored `.env.local` files; only safe example values belong in
 `.env.example`.
 
+`SUPABASE_SERVICE_ROLE_KEY` is server-only production configuration. It must
+never use a `NEXT_PUBLIC_` name or be imported into a client component. The
+only privileged client factory is marked server-only; request handlers still
+authorize callers before any privileged domain work.
+
 ## Commands
 
 | Command | Purpose |
@@ -49,7 +54,7 @@ in ignored `.env.local` files; only safe example values belong in
 | `npm run test:unit:watch` | Run unit tests in watch mode |
 | `npm run test:e2e` | Run Playwright browser tests |
 | `npm run db:safety` | Reject malformed or destructive database migrations |
-| `npm run db:verify` | Rebuild the local Supabase database, load synthetic seed data, and run database checks |
+| `npm run db:verify` | Rebuild the local Supabase database, load synthetic seed data, and run database and RLS tests |
 | `npm run quality` | Run formatting, lint, types, unit tests, and build |
 | `npm run ci` | Run every pull-request quality gate, including E2E tests |
 
