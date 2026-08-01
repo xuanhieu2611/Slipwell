@@ -49,6 +49,12 @@ jobs:
       - name: Check database migration safety
         run: npm run db:safety
 
+      - name: Start local Supabase services
+        run: npx supabase start
+
+      - name: Verify database migrations and synthetic seed data
+        run: npm run db:verify
+
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
 
