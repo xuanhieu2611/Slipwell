@@ -138,6 +138,39 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
 
+-- OAuth can create an auth.users row before this application migration is
+-- deployed. Backfill every existing user with the same one-workspace invariant
+-- before normal trigger-driven provisioning takes over.
+do $$
+declare
+  existing_user record;
+  created_profile_user_id uuid;
+  created_workspace_id uuid;
+begin
+  for existing_user in
+    select id, raw_user_meta_data
+    from auth.users
+  loop
+    insert into public.profiles (user_id, display_name)
+    values (
+      existing_user.id,
+      nullif(trim(coalesce(existing_user.raw_user_meta_data ->> 'full_name', '')), '')
+    )
+    on conflict (user_id) do nothing
+    returning user_id into created_profile_user_id;
+
+    if created_profile_user_id is not null then
+      insert into public.workspaces (name)
+      values ('Personal workspace')
+      returning id into created_workspace_id;
+
+      insert into public.workspace_members (workspace_id, user_id, role)
+      values (created_workspace_id, existing_user.id, 'owner');
+    end if;
+  end loop;
+end;
+$$;
+
 create function public.complete_workspace_preferences(
   p_timezone text,
   p_locale text,
