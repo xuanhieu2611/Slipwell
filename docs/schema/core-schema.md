@@ -34,6 +34,9 @@ erDiagram
   CALENDAR_CONNECTIONS ||--o{ CALENDAR_SOURCES : exposes
   CALENDAR_SOURCES ||--o{ CALENDAR_EVENTS : mirrors
   WORKSPACES ||--o{ JOBS : schedules
+  WORKSPACES ||--o{ JOB_SCHEDULES : repeats
+  JOBS ||--o{ JOB_FAILURE_EVENTS : records
+  JOBS ||--o| JOB_DEAD_LETTERS : quarantines
   WORKSPACES ||--o{ EXPORTS : creates
 ```
 
@@ -56,7 +59,15 @@ source material and is not soft-deleted as a domain record.
 - Generated retainer tasks are unique by `(retainer_deliverable_id,
   retainer_task_template_id)` when both are present.
 - Notification deliveries have a globally unique `deduplication_key`.
-- Jobs are unique by `(job_type, deduplication_key)`.
+- Jobs are unique by `(job_type, deduplication_key)`. The enqueue RPC scopes a
+  caller's content-free key with the opaque workspace id before persistence so
+  tenants cannot collide.
+- Scheduled occurrences derive a content-free key from the opaque schedule id
+  and due instant. Claims use expiring leases and `SKIP LOCKED`; retries retain
+  the job id, and therefore retain the same domain-effect idempotency key.
+- Dead-letter and failure-metric records deliberately omit payloads,
+  deduplication keys, and exception messages. The private job payload is not
+  readable by authenticated clients.
 - Domain mutations are unique by a workspace-scoped idempotency key. Each
   accepted command writes its mutation snapshot, append-only activity event,
   and outbox event in the same transaction; outbox consumers are introduced in
@@ -94,3 +105,6 @@ reviewed additive forward fix. If migration history and schema diverge, inspect
 the state with `supabase migration list`; use `supabase db pull` to capture
 approved remote changes, and use `supabase migration repair` only to correct a
 known-good history record.
+
+Queue inspection and replay procedures are in the
+[background jobs runbook](../runbooks/background-jobs.md).
