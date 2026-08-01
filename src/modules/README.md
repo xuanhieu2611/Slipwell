@@ -15,6 +15,7 @@ directly.
 | Work domain | `work/` | Task, project, and monthly-retainer rules |
 | Activity and undo | `activity/` | Append-only activity, mutation provenance, outbox, and inverse mutations |
 | Durable jobs | `jobs/` | Scheduling, queue leases, retry policy, dead-letter handling, replay, and queue metrics |
+| Observability | `observability/` | Redacted logs, request/trace correlation, metrics, error tracking, analytics, and alert rules |
 | Slipping | `slipping/` | Deterministic evaluation, evidence, signal lifecycle, and snoozing |
 | Calendar | `calendar/` | Google Calendar read-only connection, synchronization, and reconciliation |
 | Search | `search/` | Authorized keyword indexing and retrieval projections |

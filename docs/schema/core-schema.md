@@ -11,6 +11,7 @@ source.
 erDiagram
   WORKSPACES ||--o{ WORKSPACE_MEMBERS : contains
   WORKSPACES ||--o{ CAPTURES : owns
+  CAPTURES ||--o{ JOBS : traces
   CAPTURES ||--o{ CAPTURE_TRANSCRIPTS : produces
   CAPTURES ||--o{ CAPTURE_PROPOSALS : proposes
   WORKSPACES ||--o{ DOMAINS : organizes
@@ -55,6 +56,10 @@ source material and is not soft-deleted as a domain record.
 ## Idempotency and projections
 
 - Captures are unique by `(workspace_id, idempotency_key)`.
+- A capture receipt may store an immutable, opaque `request_id`. The
+  service-role-only `capture_trace_lineage()` function correlates that receipt
+  with dedicated job trace ids, AI runs, proposals, and accepted mutations
+  without returning source text, payloads, proposal content, or domain fields.
 - Retainer cycles are unique by `(project_id, cycle_key)`.
 - Generated retainer tasks are unique by `(retainer_deliverable_id,
   retainer_task_template_id)` when both are present.
@@ -108,3 +113,5 @@ known-good history record.
 
 Queue inspection and replay procedures are in the
 [background jobs runbook](../runbooks/background-jobs.md).
+Telemetry destinations, alert rules, and privacy-safe capture diagnosis are in
+the [observability runbook](../runbooks/observability.md).

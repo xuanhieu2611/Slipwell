@@ -12,6 +12,8 @@ const productionOnlyEnvironmentKeys = [
   "OAUTH_TOKEN_ENCRYPTION_KEY",
   "TRANSCRIPTION_API_KEY",
   "AI_PROVIDER_API_KEY",
+  "OBSERVABILITY_INGEST_TOKEN",
+  "ANALYTICS_INGEST_TOKEN",
 ] as const;
 
 const environmentSchema = z.object({

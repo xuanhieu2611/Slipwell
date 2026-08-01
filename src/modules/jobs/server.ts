@@ -29,11 +29,14 @@ export async function enqueueJob(
   client: JobsRpcClient = createAdminClient(),
 ): Promise<EnqueueJobResult> {
   const command = enqueueJobSchema.parse(input);
+  const payload = command.captureId
+    ? { ...command.payload, capture_id: command.captureId }
+    : command.payload;
   const { data, error } = await client.rpc("enqueue_job", {
     p_workspace_id: command.workspaceId,
     p_job_type: command.jobType,
     p_deduplication_key: command.deduplicationKey,
-    p_payload_json: command.payload,
+    p_payload_json: payload,
     p_run_after: command.runAfter ?? new Date().toISOString(),
     p_max_attempts: command.maxAttempts,
     p_timeout_seconds: command.timeoutSeconds,

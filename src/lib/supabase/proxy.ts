@@ -4,9 +4,10 @@ import { getSupabasePublicConfiguration } from "@/src/config/environment";
 
 export async function updateSession(
   request: NextRequest,
+  requestHeaders: Headers = new Headers(request.headers),
 ): Promise<NextResponse> {
   const configuration = getSupabasePublicConfiguration(process.env);
-  let response = NextResponse.next({ request });
+  let response = NextResponse.next({ request: { headers: requestHeaders } });
 
   if (!configuration) {
     return response;
@@ -25,7 +26,9 @@ export async function updateSession(
             request.cookies.set(name, value);
           }
 
-          response = NextResponse.next({ request });
+          response = NextResponse.next({
+            request: { headers: requestHeaders },
+          });
 
           for (const { name, value, options } of cookiesToSet) {
             response.cookies.set(name, value, options);

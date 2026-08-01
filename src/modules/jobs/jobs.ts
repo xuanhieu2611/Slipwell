@@ -6,6 +6,7 @@ export const jobPayloadSchema = z.record(z.string(), z.unknown());
 
 export const enqueueJobSchema = z.object({
   workspaceId: z.string().uuid().nullable(),
+  captureId: z.string().uuid().nullable().default(null),
   jobType: jobTypeSchema,
   deduplicationKey: z.string().trim().min(1).max(160),
   payload: jobPayloadSchema.default({}),
