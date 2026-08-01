@@ -75,6 +75,8 @@ npm run db:verify
 
 See the [core schema map and migration policy](docs/schema/core-schema.md) for
 the relational model and production recovery procedure.
+The [background jobs runbook](docs/runbooks/background-jobs.md) documents queue
+health, privacy-safe dead-letter inspection, and replay.
 
 ## Repository structure
 
