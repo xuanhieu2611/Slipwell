@@ -32,10 +32,22 @@ export type Environment = Readonly<
   >
 >;
 
+export type SupabasePublicConfiguration = Readonly<{
+  url: string;
+  publishableKey: string;
+}>;
+
 export class EnvironmentValidationError extends Error {
   constructor(issues: readonly string[]) {
     super(`Invalid environment configuration:\n- ${issues.join("\n- ")}`);
     this.name = "EnvironmentValidationError";
+  }
+}
+
+export class SupabaseConfigurationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "SupabaseConfigurationError";
   }
 }
 
@@ -100,4 +112,36 @@ export function validateEnvironment(
     SLIPWELL_ENVIRONMENT,
     NEXT_PUBLIC_APP_URL,
   });
+}
+
+/**
+ * Returns null for the deliberately synthetic local/prototype experience.
+ * A partially configured client is unsafe because it produces opaque auth
+ * failures, so require both public values before enabling Supabase features.
+ */
+export function getSupabasePublicConfiguration(
+  environment: Readonly<Record<string, string | undefined>>,
+): SupabasePublicConfiguration | null {
+  const url = environment.NEXT_PUBLIC_SUPABASE_URL?.trim();
+  const publishableKey =
+    environment.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY?.trim();
+
+  if (!url && !publishableKey) {
+    return null;
+  }
+
+  if (!url || !publishableKey) {
+    throw new SupabaseConfigurationError(
+      "NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY must be configured together",
+    );
+  }
+
+  const parsedUrl = z.url("must be a valid absolute URL").safeParse(url);
+  if (!parsedUrl.success) {
+    throw new SupabaseConfigurationError(
+      "NEXT_PUBLIC_SUPABASE_URL must be a valid absolute URL",
+    );
+  }
+
+  return Object.freeze({ url: parsedUrl.data, publishableKey });
 }

@@ -100,6 +100,15 @@ The single-environment decision and the conditions for revisiting it are
 recorded in
 [`DR-0002`](docs/decisions/0002-founder-only-production-environment.md).
 
+## Authentication setup
+
+Production authentication uses Supabase Auth with Google and Apple OAuth. The
+application runs its synthetic prototype locally until the two public Supabase
+values in `.env.local` are supplied. Provider secrets are configured only in
+Supabase and are never Vercel or browser environment variables. Follow the
+[Supabase authentication runbook](docs/runbooks/supabase-authentication.md)
+when the production project and provider credentials are ready.
+
 ## Prototype references
 
 See the guides for [SLIP-003](docs/prototypes/slip-003.md) and

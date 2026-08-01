@@ -298,7 +298,7 @@ The user must never lose the original audio or transcript because routing failed
 ### 7.1 Authentication, workspace, and onboarding
 
 **AUTH-01 — Account creation**  
-The user must be able to authenticate with Apple or a magic-link email. A password-based flow is not required for beta.
+The user must be able to authenticate with Google or Apple OAuth. A password-based flow is not required for beta.
 
 **AUTH-02 — Personal workspace**  
 Account creation must create exactly one personal workspace and membership record in one transaction.
@@ -1482,7 +1482,7 @@ Messages must state whether user data is safe and what the user can do next. Int
 | Web | TypeScript and Next.js responsive application with PWA manifest, service worker where useful, microphone capture, and IndexedDB offline queue |
 | API | TypeScript service layer behind Next.js server routes or a separately deployable Node service |
 | Database | Supabase Postgres with row-level security |
-| Authentication | Supabase Auth with Apple and email magic link |
+| Authentication | Supabase Auth with Google and Apple OAuth |
 | Object storage | Private Supabase Storage buckets with signed URLs |
 | Search | Postgres full-text search; pgvector added for semantic beta |
 | Background jobs | Durable queue and worker process with retries, deduplication, schedules, and dead-letter visibility |

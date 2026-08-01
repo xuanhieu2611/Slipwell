@@ -295,7 +295,7 @@ Users can sign in and receive exactly one isolated personal workspace.
 
 ### Acceptance criteria
 
-- [ ] Apple sign-in and email magic link are configured, or an explicitly documented beta subset is approved.
+- [ ] Google and Apple OAuth are configured, or an explicitly documented beta subset is approved.
 - [ ] First authentication creates one profile, workspace, and owner membership transactionally.
 - [ ] Replayed callbacks cannot create duplicate workspaces.
 - [ ] Workspace stores IANA timezone, locale, week start, and morning default.
