@@ -26,6 +26,8 @@ erDiagram
   PEOPLE ||--o{ PERSON_DATES : tracks
   WORKSPACES ||--o{ NOTES : owns
   WORKSPACES ||--o{ ACTIVITY_EVENTS : records
+  WORKSPACES ||--o{ MUTATION_EVENTS : audits
+  WORKSPACES ||--o{ OUTBOX_EVENTS : publishes
   WORKSPACES ||--o{ SLIPPING_RULES : configures
   SLIPPING_RULES ||--o{ SLIPPING_SIGNALS : detects
   WORKSPACES ||--o{ CALENDAR_CONNECTIONS : connects
@@ -55,6 +57,10 @@ source material and is not soft-deleted as a domain record.
   retainer_task_template_id)` when both are present.
 - Notification deliveries have a globally unique `deduplication_key`.
 - Jobs are unique by `(job_type, deduplication_key)`.
+- Domain mutations are unique by a workspace-scoped idempotency key. Each
+  accepted command writes its mutation snapshot, append-only activity event,
+  and outbox event in the same transaction; outbox consumers are introduced in
+  SLIP-012.
 - Search documents are derived, one per workspace/entity pair; their outbox
   production and authorization recheck are implemented in SLIP-011 and
   SLIP-041.
