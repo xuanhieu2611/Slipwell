@@ -31,6 +31,11 @@ recurring interval. Deduplication and schedule keys may contain opaque ids and
 version numbers, but never titles, names, note text, transcripts, calendar
 details, email addresses, or other private facts.
 
+Capture processing calls `enqueueJob` with its opaque `captureId`. Enqueue
+validates the capture against the job workspace and copies the id to the
+content-free trace column used by capture diagnostics. Do not add a second
+capture id only inside an ad hoc payload field.
+
 Register handlers by job type with `runJobWorker`. A handler receives an
 `AbortSignal`, payload version, attempt metadata, and the stable `effectKey`.
 Provider adapters should honor cancellation and translate failures into a

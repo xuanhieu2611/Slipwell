@@ -7,17 +7,24 @@ vi.mock("../../lib/supabase/admin", () => ({
 
 import type { JobsRpcClient } from "./server";
 import { JobExecutionError, runJobWorker } from "./worker";
+import {
+  createObservability,
+  type TelemetryDestination,
+  type TelemetryEnvelope,
+} from "../observability";
 
 const jobId = "81000000-0000-4000-8000-000000000001";
 const lockToken = "81000000-0000-4000-8000-000000000002";
 const workspaceId = "81000000-0000-4000-8000-000000000003";
 
-function claimedJob() {
+function claimedJob(
+  payload: Readonly<Record<string, unknown>> = { entity_id: "opaque-entity" },
+) {
   return {
     job_id: jobId,
     workspace_id: workspaceId,
     job_type: "test.effect",
-    payload_json: { entity_id: "opaque-entity" },
+    payload_json: payload,
     payload_version: 1,
     attempt: 1,
     max_attempts: 5,
@@ -51,6 +58,61 @@ function rpcClient(
 }
 
 describe("runJobWorker", () => {
+  it("correlates capture jobs without exporting their private payload", async () => {
+    const records: TelemetryEnvelope[] = [];
+    const destination: TelemetryDestination = {
+      send(record) {
+        records.push(record);
+      },
+    };
+    const observability = {
+      client: createObservability({
+        environment: "local",
+        operationsDestination: destination,
+        analyticsDestination: destination,
+      }),
+      alerts: {
+        queueAgeSeconds: 300,
+        processingFailuresPerHour: 5,
+        authorizationFailuresPerFiveMinutes: 3,
+      },
+    } as const;
+    const captureId = "81000000-0000-4000-8000-000000000004";
+    const privateTranscript = "private transcript from a capture";
+    const client = rpcClient((name) => {
+      if (
+        name === "materialize_due_job_schedules" ||
+        name === "promote_outbox_events"
+      ) {
+        return 0;
+      }
+      if (name === "claim_jobs") {
+        return [
+          claimedJob({ capture_id: captureId, transcript: privateTranscript }),
+        ];
+      }
+      if (name === "complete_job") {
+        return true;
+      }
+      if (name === "job_queue_metrics") {
+        return [metric()];
+      }
+      throw new Error(`Unexpected RPC ${name}`);
+    });
+
+    await runJobWorker({
+      workerId: "worker:test",
+      handlers: { "test.effect": async () => {} },
+      client,
+      observability,
+    });
+
+    const delivered = JSON.stringify(records);
+    expect(delivered).toContain(captureId);
+    expect(delivered).toContain(jobId);
+    expect(delivered).not.toContain(privateTranscript);
+  });
+
   it("preserves one effect key across concurrent at-least-once deliveries", async () => {
     const appliedEffects = new Set<string>();
     const deliveredEffectKeys: string[] = [];
@@ -88,6 +150,7 @@ describe("runJobWorker", () => {
       workerId: "worker:test",
       handlers: { "test.effect": handler },
       client,
+      observability: null,
     };
     const [first, second] = await Promise.all([
       runJobWorker(options),
@@ -138,6 +201,7 @@ describe("runJobWorker", () => {
         },
       },
       client,
+      observability: null,
     });
 
     const failureCall = calls.find((call) => call.name === "fail_job");
@@ -182,6 +246,7 @@ describe("runJobWorker", () => {
         },
       },
       client,
+      observability: null,
     });
 
     expect(result.failed).toBe(1);

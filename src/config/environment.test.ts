@@ -79,6 +79,8 @@ describe("validateEnvironment", () => {
     "OAUTH_TOKEN_ENCRYPTION_KEY",
     "TRANSCRIPTION_API_KEY",
     "AI_PROVIDER_API_KEY",
+    "OBSERVABILITY_INGEST_TOKEN",
+    "ANALYTICS_INGEST_TOKEN",
   ])("rejects %s outside production without printing its value", (key) => {
     const secret = "private-value-that-must-not-appear";
 

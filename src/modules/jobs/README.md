@@ -14,4 +14,10 @@ Payloads are private and available only to the server-side worker. Metrics,
 failure events, and dead-letter rows contain job type, opaque ids, bounded error
 codes, counts, and timestamps—never payloads or exception messages.
 
+Capture work uses the explicit `captureId` enqueue property. The worker receives
+that opaque id separately for safe correlation and exports content-free job
+logs, traces, queue metrics, failures, and alerts through server observability
+by default. Tests may pass `observability: null`; production workers must not
+disable it.
+
 See `docs/runbooks/background-jobs.md` for the operational workflow.
