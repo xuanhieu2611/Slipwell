@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   EnvironmentValidationError,
   getSupabasePublicConfiguration,
+  getSupabaseServiceConfiguration,
   SupabaseConfigurationError,
   validateEnvironment,
 } from "./environment";
@@ -125,6 +126,34 @@ describe("getSupabasePublicConfiguration", () => {
     } catch (error) {
       expect(error).toBeInstanceOf(SupabaseConfigurationError);
       expect(String(error)).not.toContain(key);
+    }
+  });
+});
+
+describe("getSupabaseServiceConfiguration", () => {
+  it("returns server-only service configuration without making it public", () => {
+    expect(
+      getSupabaseServiceConfiguration({
+        NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co",
+        SUPABASE_SERVICE_ROLE_KEY: "service-role-key",
+      }),
+    ).toEqual({
+      url: "https://example.supabase.co",
+      serviceRoleKey: "service-role-key",
+    });
+  });
+
+  it("rejects partial service configuration without echoing the secret", () => {
+    const serviceRoleKey = "service-role-key";
+
+    try {
+      getSupabaseServiceConfiguration({
+        SUPABASE_SERVICE_ROLE_KEY: serviceRoleKey,
+      });
+      expect.unreachable("service configuration should have failed");
+    } catch (error) {
+      expect(error).toBeInstanceOf(SupabaseConfigurationError);
+      expect(String(error)).not.toContain(serviceRoleKey);
     }
   });
 });

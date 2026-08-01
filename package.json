@@ -15,7 +15,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "db:safety": "node --experimental-strip-types scripts/check-database-safety.ts",
-    "db:verify": "npm run db:safety && supabase db reset --local && supabase db lint --local --fail-on error && supabase db advisors --local --fail-on error && supabase migration list --local",
+    "db:verify": "npm run db:safety && supabase db reset --local && supabase db lint --local --fail-on error && supabase db advisors --local --fail-on error && supabase test db --local && supabase migration list --local",
     "test": "npm run test:unit",
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
@@ -29,6 +29,7 @@
     "next": "16.2.12",
     "react": "19.2.8",
     "react-dom": "19.2.8",
+    "server-only": "0.0.1",
     "zod": "^4.4.3"
   },
   "devDependencies": {

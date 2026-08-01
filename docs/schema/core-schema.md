@@ -59,8 +59,12 @@ source material and is not soft-deleted as a domain record.
   production and authorization recheck are implemented in SLIP-011 and
   SLIP-041.
 
-RLS is enabled on every workspace-owned table with no direct-client policies.
-SLIP-010 adds the workspace authorization policies and private-storage rules.
+RLS is enabled on every exposed user-owned table. Authenticated users receive
+read access only to their own workspace rows; direct domain writes remain
+server-mediated so the application services can enforce commands and
+invariants. The `capture-audio` and `exports` buckets are private, and each
+object key begins with its workspace UUID. Server download helpers mint URLs
+that expire after five minutes; Storage RLS independently verifies the prefix.
 
 ## Migration and recovery policy
 
